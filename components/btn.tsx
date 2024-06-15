@@ -2,11 +2,15 @@
 import { InsertCategory } from '@/actions/actions';
 import { useServerAction } from 'zsa-react';
 import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
+import { Loader2, CheckIcon } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
 
 import { useState } from 'react';
 import { category } from '@prisma/client';
+import { ToastAction } from './ui/toast';
+import { cn } from '@/lib/utils';
 export default function Btn() {
+  const { toast } = useToast();
   const [counter, setCounter] = useState<category>();
   const { isPending, execute, data } = useServerAction(InsertCategory);
   return (
@@ -15,15 +19,36 @@ export default function Btn() {
         disabled={isPending}
         onClick={async () => {
           const [data, err] = await execute({
-            name: 'سایر',
+            name: 'مدارس  ',
             description: '...',
           });
 
           if (err) {
-            // handle error
+            toast({
+              variant: 'error',
+              title: 'ا در ثبت کاتالوگ  ',
+              description: 'ثبت ای اتفاق افتاد است     ' + err.message,
+              //action: <ToastAction altText="Try again">Try again</ToastAction>,
+            });
+
             return;
           }
 
+          toast({
+            className: cn(
+              'top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4'
+            ),
+            title: 'ثبت کاتالوگ ',
+            variant: 'success',
+            description: (
+              <div className='flex items-center'>
+                <CheckIcon className='mr-2' />
+                <span className='first-letter:capitalize'>
+                  ثبت با موفقیت انجام شد
+                </span>
+              </div>
+            ),
+          });
           setCounter(data);
         }}
       >
