@@ -16,19 +16,18 @@ export const incrementNumberAction = createServerAction()
     return input.number + 1;
   });
 
+export const InsertCategory = createServerAction()
+  .input(
+    z.object({
+      name: z.string(),
+      description: z.string(),
+    }),
+  )
+  .handler(async ({ input }) => {
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
-export  const InsertCategory = createServerAction().input(
-z.object({
-    name:z.string(),
-    description:z.string()
-})
-).handler(async({input})=>{
     const category = await prisma.category.create({
-        data: { name:input.name , description:input.description  },
-      })
-      
-})
-
-   
-
- 
+      data: { name: input.name, description: input.description },
+    });
+    return category;
+  });

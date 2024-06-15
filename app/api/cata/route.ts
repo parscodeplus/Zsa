@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
-import prisma from "../../../libs/prisma";
-export async function POST(req: NextResponse) {
+import { NextRequest, NextResponse } from "next/server";
+import prisma from "@/libs/prisma";
+export async function POST(req: NextRequest) {
   const body = await req.json();
   console.log(body);
   try {
@@ -8,7 +8,7 @@ export async function POST(req: NextResponse) {
     const category = await prisma.category.create({
       data: { name, description },
     });
-    return NextResponse.json({"success":1,"message":"create success","cataegory":category});
+    return NextResponse.json({category});
     
   } catch (error) {
     return NextResponse.json({
