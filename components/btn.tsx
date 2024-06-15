@@ -2,6 +2,7 @@
 import { InsertCategory } from '@/actions/actions';
 import { useServerAction } from 'zsa-react';
 import { Button } from '@/components/ui/button';
+import { Loader2 } from 'lucide-react';
 
 import { useState } from 'react';
 import { category } from '@prisma/client';
@@ -26,6 +27,7 @@ export default function Btn() {
           setCounter(data);
         }}
       >
+        {isPending && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
         Invoke action
       </Button>
       <p>Count:</p>
