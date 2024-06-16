@@ -1,6 +1,6 @@
 'use server';
 import { createServerAction } from 'zsa';
-import z from 'zod';
+import z, { boolean } from 'zod';
 import prisma from '@/libs/prisma';
 
 export const incrementNumberAction = createServerAction()
@@ -24,10 +24,25 @@ export const InsertCategory = createServerAction()
     }),
   )
   .handler(async ({ input }) => {
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 50));
 
     const category = await prisma.category.create({
       data: { name: input.name, description: input.description },
     });
     return category;
+  });
+
+export const FindCategory = createServerAction()
+  .input(
+    z.object({
+      name: z.string(),
+    }),
+  )
+  .handler(async ({ input }) => {
+
+    const category = await prisma.category.findUnique({
+      where: { name: input.name },
+    });
+    if (category) return true;
+    else return false;
   });
