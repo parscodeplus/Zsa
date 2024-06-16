@@ -1,6 +1,7 @@
 import Btn from "@/components/btn";
 
 const Home = () => {
+    
   return ( 
     <>
     <Btn />

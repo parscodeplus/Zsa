@@ -21,6 +21,7 @@ import { cn } from '@/lib/utils';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+
 const FormSchema = z.object({
   name: z
     .string()
@@ -65,6 +66,7 @@ export default function Btn() {
     });
   }
   return (
+     
     <main className='flex min-h-screen flex-col items-center justify-between p-24'>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
