@@ -13,9 +13,10 @@ import useNetworkStatus from '@/hook/useNetworkStatus';
 
 const NetworkOffline = () => {
   const { isOnline } = useNetworkStatus();
+  const [open, setopen] = React.useState<boolean>(isOnline)
 
   return (
-    <Dialog open={!isOnline}>
+    <Dialog open={open} onOpenChange={setopen}>
       <DialogContent className='rounded-lg'>
         <DialogHeader>
           <DialogTitle>وضعیت اتصال به اینترنت </DialogTitle>
