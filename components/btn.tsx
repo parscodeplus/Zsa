@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Loader2, CheckIcon, CircleAlert } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { Input } from '@/components/ui/input';
+import DotPattern from "@/components/magicui/dot-pattern";
 import {
   Form,
   FormControl,
@@ -154,6 +155,17 @@ export default function Btn() {
       </Button>
       <p>Count:</p>
       <div>{isPending ? 'saving...' : counter?.name}</div>
+      <div className="relative flex h-full w-full max-w-[32rem] items-center justify-center overflow-hidden rounded-lg border bg-background p-20 md:shadow-xl">
+      <p className="z-10 whitespace-pre-wrap text-center text-5xl font-medium tracking-tighter text-black dark:text-white">
+        Dot Patter
+      </p>
+      <DotPattern
+      
+        className={cn(
+          "[mask-image:radial-gradient(200px_circle_at_center,white,transparent)]",
+        )}
+      />
+    </div>
     </main>
   );
 }
