@@ -40,6 +40,8 @@ const InfiniteScrollDemo = () => {
   const [products, setProducts] = React.useState<DummyProduct[]>([]);
 
   const next = async () => {
+    console.log('start');
+    
     setLoading(true);
 
     /**
@@ -50,6 +52,8 @@ const InfiniteScrollDemo = () => {
       const res = await fetch(
         `https://fakestoreapi.com/products?limit=1&skip=1&select=title,price`,
       );
+      console.log(res.json());
+      
       const data = (await res.json()) as DummyProductResponse;
       setProducts((prev) => [...prev, ...data.products]);
       setPage((prev) => prev + 1);
