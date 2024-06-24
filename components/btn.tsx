@@ -89,12 +89,13 @@ export default function Btn() {
                       )}
                       placeholder='name'
                       className='block w-full p-4 ps-10'
-                      {...fieldProps}
                       onChange={(events)=>{
                         events.preventDefault()
                        setName(events.target.value)
  
                      }}
+                     {...fieldProps}
+
                       // onChange={async (e) => {
                       //   e.preventDefault();
                       //   const [data, err] = await FindCategory({
