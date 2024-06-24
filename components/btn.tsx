@@ -22,6 +22,7 @@ import { cn } from '@/lib/utils';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { InputWithIcon } from './ui/InputWithIcon';
 
 const FormSchema = z.object({
   name: z
@@ -47,6 +48,7 @@ const FormSchema = z.object({
 export default function Btn() {
   const { toast } = useToast();
   const [counter, setCounter] = useState<category>();
+  const [name, setName] = useState("")
   const { isPending, execute, data } = useServerAction(InsertCategory);
   const [result, setResult] = useState<boolean | null>(false);
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -74,15 +76,25 @@ export default function Btn() {
           <FormField
             control={form.control}
             name='name'
-            render={({ field }) => (
+            render={({ field: { value, onChange, ...fieldProps } }) => (
               <FormItem>
                 <FormLabel>category</FormLabel>
                 <FormControl>
                   <div className='relative'>
-                    <Input
+                    <InputWithIcon
+                      endIcon= {!result ? (
+                        <CheckIcon className='h-4 w-4 animate-bounce text-green-700' />
+                      ) : (
+                        <CircleAlert className='h-4 w-4 animate-pulse text-red-700' />
+                      )}
                       placeholder='name'
                       className='block w-full p-4 ps-10'
-                      {...field}
+                      {...fieldProps}
+                      onChange={(events)=>{
+                        events.preventDefault()
+                       setName(events.target.value)
+ 
+                     }}
                       // onChange={async (e) => {
                       //   e.preventDefault();
                       //   const [data, err] = await FindCategory({
@@ -92,13 +104,13 @@ export default function Btn() {
                       // }}
                     />
 
-                    <div className='pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3'>
+                    {/* <div className='pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3'>
                       {!result ? (
                         <CheckIcon className='h-4 w-4 animate-bounce text-green-700' />
                       ) : (
                         <CircleAlert className='h-4 w-4 animate-pulse text-red-700' />
                       )}
-                    </div>
+                    </div> */}
                   </div>
                 </FormControl>
                 <FormDescription>
@@ -115,9 +127,9 @@ export default function Btn() {
 
       <Button
         disabled={isPending}
-        onClick={async () => {
+        onClick={async (e) => {
           const [data, err] = await execute({
-            name: 'مدارس  ',
+            name: name,
             description: '...',
           });
 

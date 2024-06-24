@@ -4,12 +4,12 @@ import AddService from "@/components/add-service";
 import Btn from "@/components/btn";
 
 const Home = () => {
-    
+  
   return ( 
     <>
-     <AddHomeScreen/>
+     {/* <AddHomeScreen/> */}
     <Btn />
-    <AddService />
+    {/* <AddService /> */}
     <InfiniteScrollDemo />
     </>
    );

@@ -1,6 +1,6 @@
 'use server';
 import { createServerAction } from 'zsa';
-import z, { boolean } from 'zod';
+import z, { boolean, string } from 'zod';
 import prisma from '@/libs/prisma';
 
 export const incrementNumberAction = createServerAction()
@@ -45,4 +45,23 @@ export const FindCategory = createServerAction()
     });
     if (category) return true;
     else return false;
+  });
+
+  export const FindCategoryForInfiniteScroll  = createServerAction()
+  .input(
+    z.object({
+      
+      limit: z.number(),
+      skip:z.number(),
+      page:z.number(),
+    }),
+  )
+  .handler(async ({ input }) => {
+
+    const category = await prisma.category.findMany({
+      select :{name:true,description:true },
+          skip: input.skip * input.page, 
+          take: input.limit,
+    });
+    return category
   });
