@@ -16,6 +16,7 @@ type Props = {
 
 const Navigation: React.FC<Props> = ({ item, onClick }) => {
   const { icon, text } = item;
+const [active, setActive] = useState(0);
 
   return (
     <motion.button
@@ -36,7 +37,7 @@ const Navigation: React.FC<Props> = ({ item, onClick }) => {
 };
 
 // MyComponent.tsx
-import React from 'react';
+import React, { useState } from 'react';
 
 const ButtonNavigation: React.FC<{ icons: IconModel[] }> = ({ icons }) => {
   return (

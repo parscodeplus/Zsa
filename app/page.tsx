@@ -3,6 +3,7 @@ import InfiniteScrollDemo from '@/components/InfiniteScrollDemo';
 import AddService from '@/components/add-service';
 import ButtonNavigation, { IconModel } from '@/components/bottom-navigation';
 import Btn from '@/components/btn';
+import Component from '@/components/buttom-navigion';
 
 const Home = () => {
   const icons: IconModel[] = [
@@ -78,7 +79,8 @@ const Home = () => {
       <Btn />
       {/* <AddService /> */}
       {/* <InfiniteScrollDemo /> */}
-      <ButtonNavigation icons={icons} />
+      <Component /> 
+      {/* <ButtonNavigation icons={icons} /> */}
     </>
   );
 };
