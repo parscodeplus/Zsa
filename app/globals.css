@@ -74,3 +74,15 @@
     @apply bg-background text-foreground;
   }
 }
+
+.inner-circle::before {
+  content: '';
+  width: 45px;
+  height: 45px;
+  background-color: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 39%;
+  left: 50%;
+  transform: translate(-50%, -32%);
+}
