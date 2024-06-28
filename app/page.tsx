@@ -1,6 +1,7 @@
 import AddHomeScreen from '@/components/AddToHomeScreen/AddToHomeScreen';
 import InfiniteScrollDemo from '@/components/InfiniteScrollDemo';
 import AddService from '@/components/add-service';
+import BottomNavigation from '@/components/framer-buttom-navigation';
 import ButtonNavigation, { IconModel } from '@/components/bottom-navigation';
 import Btn from '@/components/btn';
 import Component from '@/components/buttom-navigion';
@@ -79,7 +80,8 @@ const Home = () => {
       <Btn />
       {/* <AddService /> */}
       {/* <InfiniteScrollDemo /> */}
-      <Component /> 
+      {/* <Component />  */}
+      <BottomNavigation /> 
       {/* <ButtonNavigation icons={icons} /> */}
     </>
   );
