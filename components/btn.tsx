@@ -24,7 +24,8 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { InputWithIcon } from './ui/InputWithIcon';
 import { Vortex } from './ui/vortex'; // https://ui.aceternity.com/
-
+import withLazyLoad from './withLazyLoad';
+const LazyComponentWithLazyLoad = withLazyLoad(Vortex);
 const FormSchema = z.object({
   name: z
     .string()
@@ -186,6 +187,7 @@ export default function Btn() {
           setCounter(data);
         }}
       >
+
         {isPending && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
         Invoke action
       </Button>
@@ -201,6 +203,7 @@ export default function Btn() {
           "[mask-image:radial-gradient(200px_circle_at_center,white,transparent)]",
         )}
       />
+      <LazyComponentWithLazyLoad />
     </div>
     </main>
   );
