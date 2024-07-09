@@ -2,7 +2,8 @@
 import { createServerAction } from 'zsa';
 import z, { boolean, string } from 'zod';
 import prisma from '@/libs/prisma';
-
+import {Option} from "@/types"
+import { category } from '@prisma/client';
 export const incrementNumberAction = createServerAction()
   .input(
     z.object({
@@ -39,7 +40,6 @@ export const FindCategory = createServerAction()
     }),
   )
   .handler(async ({ input }) => {
-
     const category = await prisma.category.findUnique({
       where: { name: input.name },
     });
@@ -47,21 +47,47 @@ export const FindCategory = createServerAction()
     else return false;
   });
 
-  export const FindCategoryForInfiniteScroll  = createServerAction()
+export const FindCategoryForInfiniteScroll = createServerAction()
   .input(
     z.object({
-      
       limit: z.number(),
-      skip:z.number(),
-      page:z.number(),
+      skip: z.number(),
+      page: z.number(),
     }),
   )
   .handler(async ({ input }) => {
-
     const category = await prisma.category.findMany({
-      select :{name:true,description:true },
-          skip: input.skip * input.page, 
-          take: input.limit,
+      select: { name: true, description: true },
+      skip: input.skip * input.page,
+      take: input.limit,
     });
-    return category
+    return category;
+  });
+
+export const Categries = createServerAction().handler(async () => {
+  const category = await prisma.category.findMany({
+    select: { name: true, id: true },
+  });
+ 
+  const data: Option[] = category.map((item) => ({
+    label: item.name,
+    value: item.id.toString(),
+    disable: false
+  }));
+  
+  return data
+});
+
+export const produceNewMessage = createServerAction()
+  .input(
+    z.object({
+      name: z.string().min(5),
+    }),
+    {
+      type: 'formData',
+    },
+  )
+  .handler(async ({ input }) => {
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    return 'Hello, ' + input.name;
   });

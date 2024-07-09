@@ -78,7 +78,7 @@ const Home = () => {
     <>
       {/* <AddHomeScreen/> */}
       <Btn />
-      {/* <AddService /> */}
+      <AddService />
       {/* <InfiniteScrollDemo /> */}
       {/* <Component />  */}
       <BottomNavigation /> 
