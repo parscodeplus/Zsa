@@ -64,7 +64,12 @@ export const FindCategoryForInfiniteScroll = createServerAction()
     return category;
   });
 
-export const Categries = createServerAction().handler(async () => {
+export const Categries = createServerAction().retry({
+  maxAttempts: 3,
+  delay: (currentAttempt, err) => { 
+      return 1000 * currentAttempt 
+  }, 
+}).handler(async () => {
   const category = await prisma.category.findMany({
     select: { name: true, id: true },
   });

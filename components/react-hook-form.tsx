@@ -49,54 +49,35 @@ export function ReactHookForm() {
   const { isPending, execute, data } = useServerAction(Categries);
   // const { isPending, execute, data, error } =
   //   useServerAction(Categries);
-const [categores, setCategores] = useState<Option[]>([])
+  const [categores, setCategores] = useState<Option[]>([]);
   const ref = React.useRef<MultipleSelectorRef>(null);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
-   
   });
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [data, err] = await execute() 
-        // toast({
-        //        title: 'Your ref data',
-        //        description: (
-        //          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-        //            <code className="text-white">
-        //              {JSON.stringify(data, null, 2)}
-        //            </code>
-        //          </pre>
-        //        ),
-        //      });
-       if (!err) setCategores(data)
-      } catch (error) {
-       
-      }
+        const [data, err] = await execute();
+
+        if (!err) setCategores(data);
+      } catch (error) {}
     };
 
     fetchData();
   }, [execute]);
-  // useMemo(async () => {
-  //     const [data, err] = await execute() 
-  //      toast({
-  //             title: 'Your ref data',
-  //             description: (
-  //               <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-  //                 <code className="text-white">
-  //                   {JSON.stringify(data, null, 2)}
-  //                 </code>
-  //               </pre>
-  //             ),
-  //           });
-  //     if (!err) setCategores(data)
-  //   }
-  
-  // , [execute])
- 
-  async function onSubmit(frm: z.infer<typeof FormSchema>) {
-    const [data, err] = await execute();
 
+  async function onSubmit(frm: z.infer<typeof FormSchema>) {
+    // const [data, err] = await execute();
+    toast({
+      title: 'Your ref data',
+      description: (
+        <pre className='mt-2 w-[340px] rounded-md bg-slate-950 p-4'>
+          <code className='text-white'>
+            {JSON.stringify(frm.frameworks, null, 2)}
+          </code>
+        </pre>
+      ),
+    });
     // if (err) {
     //   // show a toast or something
     //   return;
@@ -106,47 +87,56 @@ const [categores, setCategores] = useState<Option[]>([])
   }
 
   return (
-  
-    <Card className='not-prose'>
-      <CardHeader>
-        <CardTitle>Form Example</CardTitle>
-      </CardHeader>
-      <CardContent className='flex flex-col gap-4'>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
-            <FormField
-              control={form.control}
-              name="frameworks"
-             render={({ field }) => (
-            <FormItem>
-              <FormLabel>Frameworks</FormLabel>
-              <FormControl>
-                <MultipleSelector
-                  {...field}
-                  disabled={isPending}
-                  options={categores}
-                  defaultOptions={categores}
-                  hidePlaceholderWhenSelected
-                  placeholder="Select frameworks you like..."
-                  emptyIndicator={
-                    <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
-                      no results found.
-                    </p>
-                  }
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-            />
-            <Button disabled={isPending} type='submit' className='w-full'>
-              {/* {isPending ? "Saving..." : "Save"} */} save
-            </Button>
-          </form>
-        </Form>
-        {/* {data && <div>Message: {data}</div>} */}
-        {/* {error && <div>Error: {JSON.stringify(error.fieldErrors)}</div>} */}
-      </CardContent>
-    </Card>
+    <section className='w-full py-12 md:py-24 lg:py-32'>
+      <div className='container px-4 md:px-6'>
+        <div className='flex flex-col items-center justify-center space-y-4 text-center'>
+          <Card className='not-prose'>
+            <CardHeader>
+              <CardTitle>Form Example</CardTitle>
+            </CardHeader>
+            <CardContent className='flex flex-col gap-4'>
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className='space-y-8'
+                >
+                  <FormField
+                    control={form.control}
+                    name='frameworks'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Frameworks</FormLabel>
+                        <FormControl>
+                          <MultipleSelector
+                            {...field}
+                            disabled={isPending}
+                            options={categores}
+                            defaultOptions={categores}
+                            hidePlaceholderWhenSelected
+                            loadingIndicator={<div>Loading...</div>}
+                            placeholder='Select frameworks you like...'
+                            emptyIndicator={
+                              <p className='text-center text-lg leading-10 text-gray-600 dark:text-gray-400'>
+                                no results found.
+                              </p>
+                            }
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Button disabled={isPending} type='submit' className='w-full'>
+                    {/* {isPending ? "Saving..." : "Save"} */} save
+                  </Button>
+                </form>
+              </Form>
+              {/* {data && <div>Message: {data}</div>} */}
+              {/* {error && <div>Error: {JSON.stringify(error.fieldErrors)}</div>} */}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </section>
   );
 }

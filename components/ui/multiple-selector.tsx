@@ -436,6 +436,8 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
                 if (mouseOn.current === false) {
                   setOpen(false);
                 }
+                setOpen(false);
+
                 inputProps?.onBlur?.(event);
               }}
               onFocus={(event) => {
@@ -472,6 +474,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
         <div className="relative">
           {open && (
             <CommandList
+             
               className="absolute top-1 z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in"
               onMouseLeave={() => {
                 mouseOn.current = false;
