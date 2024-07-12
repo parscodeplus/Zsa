@@ -1,6 +1,6 @@
 import AddHomeScreen from '@/components/AddToHomeScreen/AddToHomeScreen';
 import InfiniteScrollDemo from '@/components/InfiniteScrollDemo';
-import AddService from '@/components/add-service';
+import AddService from '@/components/services/add-service';
 import BottomNavigation from '@/components/framer-buttom-navigation';
 import ButtonNavigation, { IconModel } from '@/components/bottom-navigation';
 import Btn from '@/components/btn';

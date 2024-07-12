@@ -202,7 +202,10 @@ model serviceQuestion {
   serviceId          String
   service            service  @relation(fields: [serviceId], references: [id])
 }
-
+model serviceTime {
+  value              Int   @id @default(autoincrement())
+  label              String
+}
 enum FildType {
   CHECKBOX
   TEXTBox_SingleLine
