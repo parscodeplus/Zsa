@@ -4,13 +4,11 @@ import { useServerAction } from 'zsa-react';
 import { Categries } from '@/actions/actions';
 import { Option } from '@/types';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { Trash2Icon } from 'lucide-react';
 import { TriangleAlertIcon } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Combobox, ComboboxOptions } from '../ui/combobox';
-import { ComboboxDemo } from './service-durations';
 import { Input } from '../ui/input';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -24,7 +22,7 @@ const AddService: React.FC = () => {
   const [row, setRow] = useState<Items[]>([
     { name: '', duration: '', price: '' },
   ]);
-  const frameworks: ComboboxOptions[] = [
+  const times: ComboboxOptions[] = [
     { value: '1', label: '10 دقیقه' },
     { value: '2', label: '15 دقیقه' },
     { value: '3', label: '20 دقیقه' },
@@ -34,12 +32,12 @@ const AddService: React.FC = () => {
   const { isPending, execute, data } = useServerAction(Categries);
   const [categores, setCategores] = useState<Option[]>([]);
   const [addedCategories, setAddedCategories] = useState<string[]>([]);
-  const [selectedFrameworks, setSelectedFrameworks] = React.useState<
+  const [selectedtimes, setSelectedtimes] = React.useState<
     string | string[]
   >([]);
 
   const handleSelectionChange = (selected: string | string[]) => {
-    setSelectedFrameworks(selected);
+    setSelectedtimes(selected);
     console.log('Selected Value:', selected);
   };
 
@@ -96,73 +94,59 @@ const AddService: React.FC = () => {
   return (
     <div className='container mx-auto p-1'>
       <div className='space-y-4'>
-      <AnimatePresence>
-        {row.map((item, idx) => (
-          <motion.div
-            key={idx}
-            className='mb-6 space-y-4 rounded-lg border bg-white p-4 shadow-md md:flex md:items-center md:space-x-4 md:space-y-0'
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-          >
-            <div className='flex items-center space-x-2 md:w-1/4'>
-              <span className='text-gray-700 px-1 '>{idx + 1}. </span>
-              <div className='flex-1'>
-                <label className='block text-gray-700'>name:</label>
-                <Input
-                  // type='text'
-                  name='name'
-                  value={item.name}
-                  onChange={handleChange(idx)}
-                  // className='w-full rounded border px-2 py-1'
-                />
-              </div>
-            </div>
-            <div className='flex gap-2 space-x-2 md:w-1/4 md:flex-1'>
-              <div className='flex-1'>
-                <label className='block text-gray-700'>Duration</label>
-                <Combobox
-                  options={frameworks}
-                  selected={selectedFrameworks}
-                  mode='single'
-                  placeholder='انتخاب زمات ...'
-                  onChange={handleSelectionChange}
-                  // onCreate={handleCreate}
-                />
-
-                {/* <input
-                  type='text'
-                  name='duration'
-                  value={item.duration}
-                  onChange={handleChange(idx)}
-                  className='w-full rounded border px-2 py-1'
-                /> */}
-              </div>
-              <div className='flex-1'>
-                <label className='block text-gray-700'>Price</label>
-                <Input
-                  // type='text'
-                  name='price'
-                  value={item.price}
-                  onChange={handleChange(idx)}
-                  // className='w-full rounded border px-2 py-1'
-                />
-              </div>
-              {row.length > 1 && (
-                <div className='flex items-end'>
-                  <Button
-                    className='rounded-full'
-                    variant={'destructive'}
-                    onClick={handleRemoveSpecificRow(idx)}
-                  >
-                    <Trash2Icon className='h-4 w-4' />
-                  </Button>
+        <AnimatePresence>
+          {row.map((item, idx) => (
+            <motion.div
+              key={idx}
+              className='mb-6 space-y-4 rounded-lg border bg-white p-4 shadow-md md:flex md:items-center md:space-x-4 md:space-y-0'
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className='flex items-center space-x-2 md:w-1/4'>
+                <span className='px-1 text-gray-700'>{idx + 1}. </span>
+                <div className='flex-1'>
+                  <label className='block text-gray-700'>name:</label>
+                  <Input
+                    // type='text'
+                    name='name'
+                    value={item.name}
+                    onChange={handleChange(idx)}
+                    // className='w-full rounded border px-2 py-1'
+                  />
                 </div>
-              )}
-            </div>
-          </motion.div>
-        ))}
+              </div>
+              <div className='flex gap-2 space-x-2 md:w-1/4 md:flex-1'>
+                <div className='flex-1'>
+                  <label className='block text-gray-700'>Duration</label>
+                  <Combobox
+                    options={times}
+                    selected={selectedtimes}
+                    mode='single'
+                    placeholder='انتخاب زمات ...'
+                    onChange={handleSelectionChange}
+                  />
+                </div>
+                <div className='flex-1'>
+                  <label className='block text-gray-700'>Price</label>
+                  <Input
+                    name='price'
+                    value={item.price}
+                    onChange={handleChange(idx)}
+                  />
+                </div>
+                {row.length > 1 && (
+                  <div className='flex items-end'>
+                    <Trash2Icon
+                      className='h-6 w-6 text-red-600'
+                      onClick={handleRemoveSpecificRow(idx)}
+                    />
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          ))}
         </AnimatePresence>
       </div>
       <div className='mt-4 flex space-x-2'>

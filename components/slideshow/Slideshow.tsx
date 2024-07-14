@@ -94,11 +94,11 @@ export function Slideshow({ slides }: { slides: ReactNode[] }) {
             index={index}
             onChangeIndex={(i) => setIndex(i)}
           />
-        </di
+        </div>
                 </CardContent>
               </Card>
             </CarouselItem>
-          ))}g
+          ))}
         </CarouselContent>
         <CarouselPrevious />
         <CarouselNext />

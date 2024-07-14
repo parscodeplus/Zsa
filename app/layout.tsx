@@ -1,9 +1,9 @@
-import type { Metadata, Viewport } from "next";
-
-const APP_NAME = "PWA App";
-const APP_DEFAULT_TITLE = "My Awesome PWA App";
-const APP_TITLE_TEMPLATE = "%s - PWA App";
-const APP_DESCRIPTION = "Best PWA app in the world!";
+import type { Metadata, Viewport } from 'next';
+import BottomNavigation from '@/components/framer-buttom-navigation';
+const APP_NAME = 'PWA App';
+const APP_DEFAULT_TITLE = 'My Awesome PWA App';
+const APP_TITLE_TEMPLATE = '%s - PWA App';
+const APP_DESCRIPTION = 'Best PWA app in the world!';
 
 export const metadata: Metadata = {
   applicationName: APP_NAME,
@@ -12,10 +12,10 @@ export const metadata: Metadata = {
     template: APP_TITLE_TEMPLATE,
   },
   description: APP_DESCRIPTION,
-  manifest: "/manifest.json",
+  manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
-    statusBarStyle: "default",
+    statusBarStyle: 'default',
     title: APP_DEFAULT_TITLE,
     // startUpImage: [],
   },
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     telephone: false,
   },
   openGraph: {
-    type: "website",
+    type: 'website',
     siteName: APP_NAME,
     title: {
       default: APP_DEFAULT_TITLE,
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     description: APP_DESCRIPTION,
   },
   twitter: {
-    card: "summary",
+    card: 'summary',
     title: {
       default: APP_DEFAULT_TITLE,
       template: APP_TITLE_TEMPLATE,
@@ -42,15 +42,16 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#FFFFFF",
+  themeColor: '#FFFFFF',
 };
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import dynamic from 'next/dynamic';
 import Header from './header';
+import TopLoader from '@/components/ui/toploader';
 
 const NetworkOffline = dynamic(() => import('@/components/net-offline'), {
-  ssr:false,
+  ssr: false,
 });
 
 export default async function RootLayout({
@@ -61,12 +62,13 @@ export default async function RootLayout({
   return (
     <html dir='rtl' lang='fa'>
       <body>
+      <TopLoader/>
         <NetworkOffline />
-        <Header />
+        {/* <Header /> */}
         {children}
         <Toaster />
+        <BottomNavigation />
       </body>
     </html>
   );
 }
-

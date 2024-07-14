@@ -3,7 +3,6 @@ import { createServerAction } from 'zsa';
 import z, { boolean, string } from 'zod';
 import prisma from '@/libs/prisma';
 import {Option} from "@/types"
-import { category } from '@prisma/client';
 export const incrementNumberAction = createServerAction()
   .input(
     z.object({

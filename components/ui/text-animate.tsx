@@ -278,4 +278,4 @@ const TextAnimate: FC<Props> = ({
 }
 
 export { TextAnimate }
-export TextAnimate
+// export TextAnimate
