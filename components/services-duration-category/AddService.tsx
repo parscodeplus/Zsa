@@ -83,9 +83,9 @@ const AddService: React.FC = () => {
         </div>
         <div className='mt-4 flex space-x-2'>
           <Button
-            variant='ghost'
+            variant='default'
             onClick={() => handleAddRow()}
-            className='rounded bg-blue-500 px-4 py-2 text-white'
+            // className='rounded bg-blue-500 px-4 py-2 text-white'
           >
             + Add Another Service
           </Button>
@@ -99,7 +99,7 @@ const AddService: React.FC = () => {
         <div className='mt-4'>
           <Button
             type='submit'
-            className='rounded bg-green-500 px-4 py-2 text-white'
+            // className='rounded bg-green-500 px-4 py-2 text-white'
           >
             Submit
           </Button>

@@ -19,7 +19,7 @@ interface BreakItemProps {
 
 const BreakItem: React.FC<BreakItemProps> = ({ b, dayIndex, breakIndex, day, handleBreakChange, removeBreak, filterTimeOptions }) => {
   return (
-    <div className='mb-4 rounded-lg bg-gray-100 py-2 pl-4 pr-2'>
+    <div className='mb-4 rounded-lg  py-2 pl-4 pr-2'>
       <label className='mb-2 block font-medium'>Breaks</label>
       <div className='flex items-center space-x-3'>
         <TimeSelect

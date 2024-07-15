@@ -1,8 +1,9 @@
+import LoadingAnimation from "@/components/loading-page";
+
 const Loading = () => {
   return (
     <>
-    
-      <div> loading... </div>
+    <LoadingAnimation />
     </>
   );
 };

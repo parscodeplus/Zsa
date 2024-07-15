@@ -32,7 +32,7 @@ const DayCard: React.FC<DayCardProps> = ({
   return (
     <motion.div
       key={day.day}
-      className='mb-6 rounded-lg border bg-primary-foreground p-4 shadow-md'
+      className='mb-6 rounded-lg border p-4 shadow-md'
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}

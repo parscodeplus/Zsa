@@ -25,9 +25,9 @@ function BottomNavigation() {
   const currentTabId = pathname.split('/')[1] || tabs[2].id; // Set the middle icon as default
   const [activeTab, setActiveTab] = useState(currentTabId);
 
-  useEffect(() => {
-    // setActiveTab(currentTabId);
-  }, [pathname, currentTabId]);
+  // useEffect(() => {
+  //   // setActiveTab(currentTabId);
+  // }, [pathname, currentTabId]);
 
   const handleClick = (tabId: SetStateAction<string>) => {
     setActiveTab(tabId);

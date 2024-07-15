@@ -146,7 +146,7 @@ const WorkSchedule: React.FC = () => {
   };
 
   return (
-    <Card className='container mx-auto p-4'>
+    <div className='container mx-auto p-4'>
       {schedule.map((day, dayIndex) => (
         <DayCard
           key={day.day}
@@ -161,7 +161,7 @@ const WorkSchedule: React.FC = () => {
           generateTimeOptions={generateTimeOptions}
         />
       ))}
-    </Card>
+    </div>
   );
 };
 

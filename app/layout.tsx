@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import BottomNavigation from '@/components/framer-buttom-navigation';
+import BottomNavigation from '@/components/buttom-navigation';
 const APP_NAME = 'PWA App';
 const APP_DEFAULT_TITLE = 'My Awesome PWA App';
 const APP_TITLE_TEMPLATE = '%s - PWA App';
@@ -49,6 +49,7 @@ import { Toaster } from '@/components/ui/toaster';
 import dynamic from 'next/dynamic';
 import Header from './header';
 import TopLoader from '@/components/ui/toploader';
+import { ThemeProvider } from '@/components/theme-provider';
 
 const NetworkOffline = dynamic(() => import('@/components/net-offline'), {
   ssr: false,
@@ -62,12 +63,19 @@ export default async function RootLayout({
   return (
     <html dir='rtl' lang='fa'>
       <body>
-      <TopLoader/>
-        <NetworkOffline />
-        {/* <Header /> */}
-        {children}
-        <Toaster />
-        <BottomNavigation />
+        <ThemeProvider
+          attribute='class'
+          defaultTheme='dark'
+          enableSystem
+          disableTransitionOnChange
+        >
+          <TopLoader />
+          <NetworkOffline />
+          {/* <Header /> */}
+          {children}
+          <Toaster />
+          <BottomNavigation />
+        </ThemeProvider>
       </body>
     </html>
   );

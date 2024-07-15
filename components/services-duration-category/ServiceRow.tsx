@@ -29,7 +29,7 @@ const ServiceRow: React.FC<ServiceRowProps> = ({
   rowLength,
 }) => (
   <motion.div
-    className='mb-6 space-y-4 rounded-lg border bg-white p-4 shadow-md md:flex md:items-center md:space-x-4 md:space-y-0'
+    className='mb-6 space-y-4 rounded-lg border p-4 shadow-md md:flex md:items-center md:space-x-4 md:space-y-0'
     initial={{ opacity: 0, y: -20 }}
     animate={{ opacity: 1, y: 0 }}
     exit={{ opacity: 0, y: -20 }}
