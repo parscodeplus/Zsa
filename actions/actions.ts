@@ -2,11 +2,32 @@
 import { createServerAction } from 'zsa';
 import z from 'zod';
 import prisma from '@/libs/prisma';
-import { Option, User } from '@/types';
+import { Category, Option, User } from '@/types';
 import { serviceSchema } from '@/schemas/serviceSchema';
 import { durationSchema } from '@/schemas/durationSchema';
 import { providerSchema } from '@/schemas/providerSchema';
+export async function GetCategory({
+  search,
+  offset = 0,
+  limit = 20,
+}: {
+  search?: string | undefined
+  offset?: number
+  limit?: number
+}) {
+  const data = await prisma.category.findMany({
+    where: { name: { contains: search } },
+    skip: offset,
+    take: limit,
+  })
 
+  const totalCount = await prisma.category.count({
+    where: { name: { contains: search } },
+  })
+  const totalPages = Math.ceil(totalCount / limit)
+
+  return { data, totalCount, totalPages }
+}
 export const InsertCategory = createServerAction()
   .input(
     z.object({
@@ -70,7 +91,7 @@ export const InsertService = createServerAction()
   .handler(async ({ input }) => {
     try {
       const servicePromises = input.services.map(async (item) => {
-         await new Promise((resolve) => setTimeout(resolve, 50));        
+        await new Promise((resolve) => setTimeout(resolve, 50));
         parseInt(item.duration) &&
           (await prisma.service.create({
             data: {
@@ -87,24 +108,24 @@ export const InsertService = createServerAction()
       throw new Error('Failed to insert service');
     }
   });
-  export const InsertProvider = createServerAction()
+export const InsertProvider = createServerAction()
   .input(providerSchema)
   .handler(async ({ input }) => {
     try {
       const providerPromises = input.providers.map(async (item) => {
-         //await new Promise((resolve) => setTimeout(resolve, 50));        
-          
-          (await prisma.provider.create({
-            data: {
-              name: item.name.trim(),
-              maxCapacity: item.maxCapacity,
-              description:'',
-              image:'',
-              phone:'',
-              email:'',
-              bookingLink:''
-            },
-          }));
+        //await new Promise((resolve) => setTimeout(resolve, 50));
+
+        await prisma.provider.create({
+          data: {
+            name: item.name.trim(),
+            maxCapacity: item.maxCapacity,
+            description: '',
+            image: '',
+            phone: '',
+            email: '',
+            bookingLink: '',
+          },
+        });
       });
       return providerPromises;
     } catch (error) {
@@ -141,26 +162,32 @@ export const FetchCategries = createServerAction()
       return 1000 * currentAttempt;
     },
   })
-  .handler(async () => {
+  .input(
+    z.object({
+      offset: z.number().default(0),
+      limit: z.number().default(5),
+    }),
+  )
+  .handler(async ({ input }) => {
     try {
-      const category = await prisma.category.findMany({
-        select: { name: true, id: true },
+      const fetchCategory: Category[] = await prisma.category.findMany({
+        skip: input.offset,
+        take: input.limit,
+
+        orderBy: {
+          id: 'asc',
+        },
       });
-
-      const data: Option[] = category.map((item) => ({
-        label: item.name,
-        value: item.id.toString(),
-        disable: false,
-      }));
-
-      return data;
+      const totalCount = await prisma.category.count()
+      const totalPages = Math.ceil(totalCount / input.limit)
+      return { fetchCategory, totalCount, totalPages }
     } catch (error) {
       console.error('Categries error:', error);
       throw new Error('Failed to fetch categories');
     }
   });
 
-  export const FetchUsers = createServerAction()
+export const FetchUsers = createServerAction()
   .retry({
     maxAttempts: 3,
     delay: (currentAttempt, err) => {
@@ -170,7 +197,7 @@ export const FetchCategries = createServerAction()
   .handler(async () => {
     try {
       const users: User[] = await prisma.user.findMany();
-    
+
       return users;
     } catch (error) {
       console.error('Users error:', error);
@@ -178,31 +205,33 @@ export const FetchCategries = createServerAction()
     }
   });
 
-  export const FetchSuggestedService = createServerAction()
+export const FetchSuggestedService = createServerAction()
   .retry({
     maxAttempts: 3,
     delay: (currentAttempt, err) => {
       return 1000 * currentAttempt;
     },
   })
-  .input(z.object({
-    categoryId:z.number()
-  }))
-  .handler(async ({input}) => {
+  .input(
+    z.object({
+      categoryId: z.number(),
+    }),
+  )
+  .handler(async ({ input }) => {
     try {
       const result = await prisma.suggestedService.findMany({
         select: { name: true, id: true },
-        where :{
-          categoryId:input.categoryId
-        }
+        where: {
+          categoryId: input.categoryId,
+        },
       });
 
       const data: Option[] = result.map((item) => ({
         label: item.name,
         value: item.id.toString(),
       }));
-     console.log(data);
-     
+      console.log(data);
+
       return data;
     } catch (error) {
       console.error('Categries error:', error);

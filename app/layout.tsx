@@ -50,6 +50,8 @@ import dynamic from 'next/dynamic';
 import Header from './header';
 import TopLoader from '@/components/ui/toploader';
 import { ThemeProvider } from '@/components/theme-provider';
+import Navbar from './_components/navbar/navbar';
+import { cn } from '@/lib/utils';
 
 const NetworkOffline = dynamic(() => import('@/components/net-offline'), {
   ssr: false,
@@ -62,20 +64,24 @@ export default async function RootLayout({
 }>) {
   return (
     <html dir='rtl' lang='fa'>
-      <body>
-        <ThemeProvider
-          attribute='class'
-          defaultTheme='light'
-          enableSystem
-          disableTransitionOnChange
-        >
-          <TopLoader />
-          <NetworkOffline />
-          {/* <Header /> */}
-          {children}
-          <Toaster />
-          <BottomNavigation />
-        </ThemeProvider>
+      <body className={cn('min-h-screen bg-background antialiased')}>
+        <div className='relative flex min-h-screen flex-col'>
+          <ThemeProvider
+            attribute='class'
+            defaultTheme='light'
+            enableSystem
+            disableTransitionOnChange
+          >
+            <TopLoader />
+
+            <NetworkOffline />
+            <Navbar />
+            {/* <Header /> */}
+            {children}
+            <Toaster />
+            <BottomNavigation />
+          </ThemeProvider>
+        </div>
       </body>
     </html>
   );

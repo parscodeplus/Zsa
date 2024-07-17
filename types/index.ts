@@ -35,9 +35,9 @@ export type Category = {
   isVisibleOnMainPage: boolean;
   isFeatured: boolean;
   position: number;
-  users: User[];
-  service: Service[];
-  suggestedServices: SuggestedService[];
+  // users: User[];
+  // service: Service[];
+  // suggestedServices: SuggestedService[];
 };
 
 export type SuggestedService = {

@@ -17,6 +17,9 @@
  */
 
 const nextConfig = {
+  images: {
+    remotePatterns: [{ hostname: "raw.githubusercontent.com" }],
+  },
   // reactStrictMode: true,
   // webpack: function (config, options) {
   // 	if (!config.watchOptions) {

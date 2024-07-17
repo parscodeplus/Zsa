@@ -30,12 +30,10 @@ export default function UserTable() {
     fetchUsers();
   }, [execute]);
 
-  return isPending ? (
-    <Skeleton className='h-[125px] w-full rounded-xl px-4' />
-  ) : (
-    <div >
-      <h1 className='text-2xl font-semibold px-4'>User List</h1>
-      <DataTable columns={userColumns} data={users} />
+  return (
+    <div>
+      <h1 className="text-2xl font-semibold">User List</h1>
+      <DataTable isPending={isPending} columns={userColumns} data={users} />
     </div>
   );
 }

@@ -29,15 +29,29 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+// import dynamic from 'next/dynamic'
+// const NoSSR = dynamic(() => import("/ui/skeleton"), { ssr: false })
+import { Skeleton } from '../ui/skeleton';
+import dynamic from 'next/dynamic'
+
+const NoSsr = (props: { children: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; }) => (
+  <React.Fragment>{props.children}</React.Fragment>
+)
+
+export default dynamic(() => Promise.resolve(NoSsr), {
+  ssr: false
+})
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  isPending:boolean;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  isPending
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -124,7 +138,18 @@ export function DataTable<TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {isPending ?
+            ( <TableRow>
+             <TableCell
+               colSpan={columns.length}
+               className='h-24 text-center'
+             >
+              
+               <Skeleton className='w-full h-24 '/>
+              
+             </TableCell>
+           </TableRow>):(
+             table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
@@ -149,7 +174,13 @@ export function DataTable<TData, TValue>({
                   No results.
                 </TableCell>
               </TableRow>
-            )}
+            )
+           )
+
+            
+            }
+            
+          
           </TableBody>
         </Table>
       </div>
