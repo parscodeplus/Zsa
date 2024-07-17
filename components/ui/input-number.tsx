@@ -2,13 +2,13 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
-import { useController, UseControllerProps } from 'react-hook-form';
+import { useController } from 'react-hook-form';
 
 interface InputNumberProps extends React.InputHTMLAttributes<HTMLInputElement> {
   min?: number;
   max?: number;
   name: string;
-  control: any;
+  control?: any;  // Make control optional
 }
 
 const InputNumber: React.FC<InputNumberProps> = ({
@@ -19,13 +19,21 @@ const InputNumber: React.FC<InputNumberProps> = ({
   control,
   ...props
 }) => {
+  const [internalValue, setInternalValue] = React.useState(props.defaultValue || 1);
+
   const {
-    field: { onChange, value },
-  } = useController({
-    name,
-    control,
-    defaultValue: props.defaultValue || 1,
-  });
+    field: { onChange, value } = {
+      onChange: setInternalValue,
+      value: internalValue,
+    },
+  } = control
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    ? useController({
+        name,
+        control,
+        defaultValue: props.defaultValue || 1,
+      })
+    : { field: { onChange: setInternalValue, value: internalValue } };
 
   const handleIncrement = () => {
     if (value < max) {
@@ -73,7 +81,6 @@ const InputNumber: React.FC<InputNumberProps> = ({
         </button>
         <Input
           type='number'
-          ref={control}
           className={cn(
             'block h-11 w-full border-x-0 border-gray-300 bg-gray-50 py-2.5 text-center text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500',
             className,

@@ -15,13 +15,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useServerAction } from 'zsa-react';
-import { Categries } from '@/actions/actions';
+import { FetchCategries } from '@/actions/actions';
 import MultipleSelector, {
   MultipleSelectorRef,
   Option,
 } from '@/components/ui/multiple-selector';
 import React, { useEffect, useMemo, useState } from 'react';
 import { toast } from './ui/use-toast';
+import { Category } from '@/types';
 
 const optionSchema = z.object({
   label: z.string(),
@@ -46,10 +47,10 @@ const OPTIONS: Option[] = [
   { label: 'Astro', value: 'astro' },
 ];
 export function ReactHookForm() {
-  const { isPending, execute, data } = useServerAction(Categries);
+  const { isPending, execute, data } = useServerAction(FetchCategries);
   // const { isPending, execute, data, error } =
   //   useServerAction(Categries);
-  const [categores, setCategores] = useState<Option[]>([]);
+  const [categores, setCategores] = useState<Category[]>([]);
   const ref = React.useRef<MultipleSelectorRef>(null);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -57,9 +58,9 @@ export function ReactHookForm() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [data, err] = await execute();
+        const [data, err] = await execute({limit:5,offset:0});
 
-        if (!err) setCategores(data);
+        if (!err) setCategores(data.fetchCategory);
       } catch (error) {}
     };
 
@@ -110,8 +111,15 @@ export function ReactHookForm() {
                           <MultipleSelector
                             {...field}
                             disabled={isPending}
-                            options={categores}
-                            defaultOptions={categores}
+                            options={categores.map((item)=> ({
+                              label: item.name,
+                              value: item.id.toString(),
+                            }))}
+                            
+                            defaultOptions={categores.map((item)=> ({
+                              label: item.name,
+                              value: item.id.toString(),
+                            }))}
                             hidePlaceholderWhenSelected
                             loadingIndicator={<div>Loading...</div>}
                             placeholder='Select frameworks you like...'

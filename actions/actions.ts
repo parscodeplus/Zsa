@@ -164,6 +164,7 @@ export const FetchCategries = createServerAction()
   })
   .input(
     z.object({
+      search:z.string().optional(),
       offset: z.number().default(0),
       limit: z.number().default(5),
     }),
@@ -171,6 +172,8 @@ export const FetchCategries = createServerAction()
   .handler(async ({ input }) => {
     try {
       const fetchCategory: Category[] = await prisma.category.findMany({
+        where: { name: { contains: input.search } },
+
         skip: input.offset,
         take: input.limit,
 
@@ -178,7 +181,9 @@ export const FetchCategries = createServerAction()
           id: 'asc',
         },
       });
-      const totalCount = await prisma.category.count()
+      const totalCount = await prisma.category.count({
+        where: { name: { contains: input.search } },
+      })
       const totalPages = Math.ceil(totalCount / input.limit)
       return { fetchCategory, totalCount, totalPages }
     } catch (error) {
