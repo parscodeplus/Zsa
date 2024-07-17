@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useServerAction } from 'zsa-react';
-import { Duration } from '@/actions/actions';
+import { FetchDuration } from '@/actions/actions';
 import { Option } from './types';
 
 import { useController, useFormContext } from 'react-hook-form';
@@ -26,7 +26,7 @@ const DurationCombobox: React.FC<{ idx: number; form: any }> = ({
   form,
 }) => {
   const [durations, setDurations] = useState<Option[]>([]);
-  const { isPending, execute } = useServerAction(Duration);
+  const { isPending, execute } = useServerAction(FetchDuration);
 
   useEffect(() => {
     const fetchDurations = async () => {

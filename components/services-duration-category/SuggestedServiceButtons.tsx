@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useServerAction } from 'zsa-react';
-import { SuggestedService } from '@/actions/actions';
+import { FetchSuggestedService } from '@/actions/actions';
 import { Option } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -17,7 +17,7 @@ const SuggestedServiceButtons: React.FC<SuggestedServiceButtonsProps> = ({
   handleAddRow,
 }) => {
   const [categories, setCategories] = useState<Option[]>([]);
-  const { isPending, execute } = useServerAction(SuggestedService);
+  const { isPending, execute } = useServerAction(FetchSuggestedService);
 
   useEffect(() => {
     const fetchCategories = async () => {

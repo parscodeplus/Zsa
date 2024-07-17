@@ -2,7 +2,7 @@
 import { createServerAction } from 'zsa';
 import z from 'zod';
 import prisma from '@/libs/prisma';
-import { Option } from '@/types';
+import { Option, User } from '@/types';
 import { serviceSchema } from '@/schemas/serviceSchema';
 import { durationSchema } from '@/schemas/durationSchema';
 import { providerSchema } from '@/schemas/providerSchema';
@@ -93,7 +93,7 @@ export const InsertService = createServerAction()
     try {
       const providerPromises = input.providers.map(async (item) => {
          //await new Promise((resolve) => setTimeout(resolve, 50));        
-       
+          
           (await prisma.provider.create({
             data: {
               name: item.name.trim(),
@@ -134,7 +134,7 @@ export const FindCategoryForInfiniteScroll = createServerAction()
     }
   });
 
-export const Categries = createServerAction()
+export const FetchCategries = createServerAction()
   .retry({
     maxAttempts: 3,
     delay: (currentAttempt, err) => {
@@ -160,8 +160,25 @@ export const Categries = createServerAction()
     }
   });
 
+  export const FetchUsers = createServerAction()
+  .retry({
+    maxAttempts: 3,
+    delay: (currentAttempt, err) => {
+      return 1000 * currentAttempt;
+    },
+  })
+  .handler(async () => {
+    try {
+      const users: User[] = await prisma.user.findMany();
+    
+      return users;
+    } catch (error) {
+      console.error('Users error:', error);
+      throw new Error('Failed to fetch Users');
+    }
+  });
 
-  export const SuggestedService = createServerAction()
+  export const FetchSuggestedService = createServerAction()
   .retry({
     maxAttempts: 3,
     delay: (currentAttempt, err) => {
@@ -210,7 +227,7 @@ export const InsertDuration = createServerAction()
     }
   });
 
-export const Duration = createServerAction()
+export const FetchDuration = createServerAction()
   .retry({
     maxAttempts: 3,
     delay: (currentAttempt, err) => {
