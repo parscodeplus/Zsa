@@ -59,7 +59,7 @@ const DayCard: React.FC<DayCardProps> = ({
                   onChange={(value: string) => handleWorkTimeChange(dayIndex, 'workStart', value)}
                   options={generateTimeOptions()}
                 />
-                <span className='px-1'>-</span>
+                <span className='relative -left-1'>-</span>
                 <TimeSelect
                   value={day.workEnd}
                   onChange={(value: string) => handleWorkTimeChange(dayIndex, 'workEnd', value)}

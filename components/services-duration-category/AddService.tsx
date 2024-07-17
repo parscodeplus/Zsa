@@ -1,18 +1,21 @@
 'use client';
-import React, { useEffect, useState } from 'react';
-import { useServerAction } from 'zsa-react';
-import { Categries } from '@/actions/actions';
+import React, { useState } from 'react';
 import { Option, Items } from './types';
 import { Button } from '@/components/ui/button';
 import { AnimatePresence } from 'framer-motion';
 import ServiceRow from './ServiceRow';
-import CategoryButtons from './CategoryButtons';
+import SuggestedServiceButtons from './SuggestedServiceButtons';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { serviceSchema, ServiceFormValues } from '@/schemas/serviceSchema';
 import { Form } from '@/components/ui/form';
-
+import { toast } from '../ui/use-toast';
+import { useServerAction } from 'zsa-react';
+import { InsertService } from '@/actions/actions';
+import { Separator } from '../ui/separator';
 const AddService: React.FC = () => {
+  const { isPending, isSuccess, execute, data, error } =
+    useServerAction(InsertService);
   const form = useForm<ServiceFormValues>({
     resolver: zodResolver(serviceSchema),
   });
@@ -22,24 +25,7 @@ const AddService: React.FC = () => {
   const [rows, setRows] = useState<Items[]>([
     { name: '', duration: '', price: '' },
   ]);
-  const [categories, setCategories] = useState<Option[]>([]);
   const [addedCategories, setAddedCategories] = useState<string[]>([]);
-  const { isPending, execute, data } = useServerAction(Categries);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const [result, err] = await execute();
-        if (!err) {
-          setCategories(result || []);
-        }
-      } catch (error) {
-        console.error('Failed to fetch categories:', error);
-      }
-    };
-
-    fetchCategories();
-  }, [execute]);
 
   const handleAddRow = (name = '') => {
     const newItem: Items = { name, duration: '', price: '' };
@@ -54,19 +40,53 @@ const AddService: React.FC = () => {
         ? updatedRows
         : [{ name: '', duration: '', price: '' }];
     });
-    setAddedCategories((prevCategories) =>
-      prevCategories.filter((cat, i) => i !== index),
-    );
+
+    setAddedCategories((prevCategories) => {
+      const categoryToRemove = rows[index].name;
+      return prevCategories.filter((cat) => cat !== categoryToRemove);
+    });
   };
 
-  const onSubmit = (data: ServiceFormValues) => {
-    console.log('Form data:', data);
+  const onSubmit = async (values: ServiceFormValues) => {
+    // toast({
+    //   title: 'You submitted the following values:',
+    //   description: (
+    //     <pre className='mt-2 w-[340px] rounded-md bg-slate-950 p-4'>
+    //       <code className='text-white'>{JSON.stringify(values, null, 2)}</code>
+    //     </pre>
+    //   ),
+    // });
+
+    const [data, err] = await execute(values);
+    toast({
+      title: 'You submitted the following values:',
+      description: (
+        <pre className='mt-2 w-[340px] rounded-md bg-slate-950 p-4'>
+          <code className='text-white'>{JSON.stringify(values, null, 2)}</code>
+        </pre>
+      ),
+    });
+    if (err) {
+      toast({
+        title: 'You submitted the following values:',
+        description: (
+          <pre className='mt-2 w-[340px] rounded-md bg-slate-950 p-4'>
+            <code className='text-white'>{JSON.stringify(err, null, 2)}</code>
+          </pre>
+        ),
+      });
+      return;
+    }
+
     reset();
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className='container mx-auto p-1'>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className='container mx-auto p-1'
+      >
         <div className='space-y-4'>
           <AnimatePresence>
             {rows.map((item, idx) => (
@@ -82,27 +102,24 @@ const AddService: React.FC = () => {
           </AnimatePresence>
         </div>
         <div className='mt-4 flex space-x-2'>
-          <Button
-            variant='default'
-            onClick={() => handleAddRow()}
-            // className='rounded bg-blue-500 px-4 py-2 text-white'
-          >
+          <Button variant='default' onClick={() => handleAddRow()}>
             + Add Another Service
           </Button>
         </div>
-        <CategoryButtons
-          isPending={isPending}
-          data={categories}
+        <Separator className="my-4" />
+        <SuggestedServiceButtons
           addedCategories={addedCategories}
           handleAddRow={handleAddRow}
         />
         <div className='mt-4'>
-          <Button
-            type='submit'
-            // className='rounded bg-green-500 px-4 py-2 text-white'
-          >
-            Submit
+          <Button disabled={isPending} type='submit'>
+            {isPending ? 'Saving...' : 'Save'}
           </Button>
+          {isSuccess && <div>save record</div>}
+          {error && <div>Error: {JSON.stringify(error.fieldErrors)}</div>}
+          <br />
+          <br />
+          <br />
         </div>
       </form>
     </Form>

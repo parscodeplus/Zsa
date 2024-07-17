@@ -27,7 +27,7 @@ const BreakItem: React.FC<BreakItemProps> = ({ b, dayIndex, breakIndex, day, han
           onChange={(value: string) => handleBreakChange(dayIndex, breakIndex, 'start', value)}
           options={filterTimeOptions(day.breaks, day.workStart, day.workEnd, true)}
         />
-        <span>-</span>
+        <span className='relative -left-1'>-</span>
         <TimeSelect
           value={b.end}
           onChange={(value: string) => handleBreakChange(dayIndex, breakIndex, 'end', value)}

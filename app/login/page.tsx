@@ -10,10 +10,12 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { JSX, SVGProps } from "react"
+import { InsertDurationForm } from "@/components/insert-duration"
 
 export default function Login() {
   return (
     <div className="grid min-h-screen place-items-center gap-4 px-4">
+      <InsertDurationForm />
       <div className="flex flex-col items-center space-y-2">
         <Link href="#" className="flex items-center space-x-2" prefetch={false}>
           <HomeIcon className="h-6 w-6" />

@@ -10,8 +10,8 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
-  FormDescription,
 } from '@/components/ui/form';
+import { Label } from '../ui/label';
 
 type ServiceRowProps = {
   form: any;
@@ -36,36 +36,23 @@ const ServiceRow: React.FC<ServiceRowProps> = ({
     transition={{ duration: 0.3 }}
   >
     <div className='flex items-center space-x-2 md:w-1/4'>
-      <span className='px-1 text-gray-700'>{idx + 1}. </span>
+      <Label className='relative top-3 px-2 '>{idx + 1}. </Label>
       <FormField
         control={form.control}
         name={`services.${idx}.name`}
         render={({ field }) => (
           <FormItem className='flex-1'>
-            <FormLabel>Name</FormLabel>
+            <FormLabel>Name<span className='text-red-600'>*</span></FormLabel>
             <FormControl>
-              <Input {...field} defaultValue={item.name} />
+              <Input {...field} defaultValue={item.name} placeholder='نام سرویس' />
             </FormControl>
-            {/* <FormDescription>
-                This is your public display name.
-              </FormDescription> */}
             <FormMessage />
           </FormItem>
         )}
       />
     </div>
     <div className='flex flex-row gap-2 space-x-2 md:w-1/4 md:flex-1 md:flex-row'>
-      <FormField
-        control={form.control}
-        name={`services.${idx}.duration`}
-        render={({ field }) => (
-          <FormItem className='flex-1'>
-            <FormLabel>Duration</FormLabel>
-            <DurationCombobox idx={idx} {...field} />
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+      <DurationCombobox form={form} idx={idx} />
       <FormField
         control={form.control}
         name={`services.${idx}.price`}
@@ -73,7 +60,7 @@ const ServiceRow: React.FC<ServiceRowProps> = ({
           <FormItem className='flex-1'>
             <FormLabel>Price</FormLabel>
             <FormControl>
-              <Input {...field} defaultValue={item.price} />
+              <Input type='number' {...field} defaultValue={item.price} />
             </FormControl>
             <FormMessage />
           </FormItem>

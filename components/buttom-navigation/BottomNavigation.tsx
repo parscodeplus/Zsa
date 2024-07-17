@@ -29,8 +29,8 @@ export const BottomNavigation: React.FC = () => {
   // }, [pathname, currentTabId]);
 
   return (
-    <div className='fixed bottom-0 left-0 z-50  flex h-14 w-full items-center justify-center'>
-      <div className='relative z-0  flex w-full items-center justify-center space-x-1 rounded-t-3xl border border-primary px-2 backdrop-blur-lg dark:border-secondary-foreground'>
+    <div className='fixed bottom-0 left-0 z-50 flex h-14 w-full items-center justify-center sm:hidden'>
+      <div className='relative z-0 mx-4 flex w-full items-center justify-center space-x-1 rounded-t-3xl border border-primary  shadow-[0_10px_20px_rgba(240,_46,_170,_0.7)] backdrop-blur-lg dark:border-secondary-foreground'>
         <TabList
           tabs={tabs}
           activeTab={activeTab}

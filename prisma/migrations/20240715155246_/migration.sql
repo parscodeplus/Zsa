@@ -1,0 +1,6 @@
+-- AlterTable
+ALTER TABLE "service" ALTER COLUMN "description" DROP NOT NULL,
+ALTER COLUMN "image" DROP NOT NULL,
+ALTER COLUMN "salesTax" DROP NOT NULL,
+ALTER COLUMN "directLink" DROP NOT NULL,
+ALTER COLUMN "maxBookingPerSlot" DROP NOT NULL;

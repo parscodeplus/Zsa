@@ -38,32 +38,31 @@ model User {
   state                 String?
   zipCode               String?
   country               String?
-  appointments          Appointment[]
-  bookings              Booking[]
 
   @@index([categoryId])
 }
 
 model Site {
-  id            String   @id @default(cuid())
+  id            String     @id @default(cuid())
   name          String?
-  description   String?  @db.Text
-  logo          String?  @default("https://public.blob.vercel-storage.com/eEZHAoPTOBSYGBE3/JRajRyC-PhBHEinQkupt02jqfKacBVHLWJq7Iy.png") @db.Text
-  font          String   @default("font-cal")
-  image         String?  @default("https://public.blob.vercel-storage.com/eEZHAoPTOBSYGBE3/hxfcV5V-eInX3jbVUhjAt1suB7zB88uGd1j20b.png") @db.Text
-  imageBlurhash String?  @default("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAhCAYAAACbffiEAAAACXBIWXMAABYlAAAWJQFJUiTwAAABfUlEQVR4nN3XyZLDIAwE0Pz/v3q3r55JDlSBplsIEI49h76k4opexCK/juP4eXjOT149f2Tf9ySPgcjCc7kdpBTgDPKByKK2bTPFEdMO0RDrusJ0wLRBGCIuelmWJAjkgPGDSIQEMBDCfA2CEPM80+Qwl0JkNxBimiaYGOTUlXYI60YoehzHJDEm7kxjV3whOQTD3AaCuhGKHoYhyb+CBMwjIAFz647kTqyapdV4enGINuDJMSScPmijSwjCaHeLcT77C7EC0C1ugaCTi2HYfAZANgj6Z9A8xY5eiYghDMNQBJNCWhASot0jGsSCUiHWZcSGQjaWWCDaGMOWnsCcn2QhVkRuxqqNxMSdUSElCDbp1hbNOsa6Ugxh7xXauF4DyM1m5BLtCylBXgaxvPXVwEoOBjeIFVODtW74oj1yBQah3E8tyz3SkpolKS9Geo9YMD1QJR1Go4oJkgO1pgbNZq0AOUPChyjvh7vlXaQa+X1UXwKxgHokB2XPxbX+AnijwIU4ahazAAAAAElFTkSuQmCC") @db.Text
-  subdomain     String?  @unique
-  customDomain  String?  @unique
-  message404    String?  @default("Blimey! You've found a page that doesn't exist.") @db.Text
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  description   String?    @db.Text
+  logo          String?    @default("https://public.blob.vercel-storage.com/eEZHAoPTOBSYGBE3/JRajRyC-PhBHEinQkupt02jqfKacBVHLWJq7Iy.png") @db.Text
+  font          String     @default("font-cal")
+  image         String?    @default("https://public.blob.vercel-storage.com/eEZHAoPTOBSYGBE3/hxfcV5V-eInX3jbVUhjAt1suB7zB88uGd1j20b.png") @db.Text
+  imageBlurhash String?    @default("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAhCAYAAACbffiEAAAACXBIWXMAABYlAAAWJQFJUiTwAAABfUlEQVR4nN3XyZLDIAwE0Pz/v3q3r55JDlSBplsIEI49h76k4opexCK/juP4eXjOT149f2Tf9ySPgcjCc7kdpBTgDPKByKK2bTPFEdMO0RDrusJ0wLRBGCIuelmWJAjkgPGDSIQEMBDCfA2CEPM80+Qwl0JkNxBimiaYGOTUlXYI60YoehzHJDEm7kxjV3whOQTD3AaCuhGKHoYhyb+CBMwjIAFz647kTqyapdV4enGINuDJMSScPmijSwjCaHeLcT77C7EC0C1ugaCTi2HYfAZANgj6Z9A8xY5eiYghDMNQBJNCWhASot0jGsSCUiHWZcSGQjaWWCDaGMOWnsCcn2QhVkRuxqqNxMSdUSElCDbp1hbNOsa6Ugxh7xXauF4DyM1m5BLtCylBXgaxvPXVwEoOBjeIFVODtW74oj1yBQah3E8tyz3SkpolKS9Geo9YMD1QJR1Go4oJkgO1pgbNZq0AOUPChyjvh7vlXaQa+X1UXwKxgHokB2XPxbX+AnijwIU4ahazAAAAAElFTkSuQmCC") @db.Text
+  subdomain     String?    @unique
+  customDomain  String?    @unique
+  message404    String?    @default("Blimey! You've found a page that doesn't exist.") @db.Text
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  user          User?      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId        String?
   posts         Post[]
+  providers     provider[]
+  services      service[]
 
   @@index([userId])
 }
-
 
 model Account {
   id                 String  @id @default(cuid())
@@ -139,39 +138,57 @@ model category {
   image               String? @default("")
   isVisibleOnMainPage Boolean @default(true)
 
-  isFeatured Boolean   @default(false)
-  position   Int       @default(0)
-  users      User[]
-  service    service[]
+  isFeatured        Boolean            @default(false)
+  position          Int                @default(0)
+  users             User[]
+  service           service[]
+  suggestedServices SuggestedService[]
+}
+
+model SuggestedService {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  description String    @db.Text
+  categoryId  Int
+  category    category? @relation(fields: [categoryId], references: [id])
+}
+
+model duration {
+  id       Int       @id @default(autoincrement())
+  title    String    @unique
+  services service[]
 }
 
 model service {
-  id                String            @id @default(cuid())
-  name              String            @unique
-  description       String
-  image             String
-  isOnMainPage      Boolean           @default(false)
-  price             Decimal
-  salesTax          Decimal
-  directLink        String
-  maxBookingPerSlot Int
-  duration          Int
-  categoryId        Int
-  category          category?         @relation(fields: [categoryId], references: [id])
-  providerId        String
-  provider          provider?         @relation(fields: [providerId], references: [id])
-  serviceQuestions  serviceQuestion[]
-  memberships       membership[]
-  products          product[]
-  appointments      Appointment[]
-  bookings          Booking[]
+  id                  String                @id @default(cuid())
+  name                String                @unique
+  description         String?
+  image               String?
+  isOnMainPage        Boolean               @default(false)
+  price               Decimal
+  salesTax            Decimal?
+  directLink          String?
+  maxBookingPerSlot   Int?
+  durationId          Int
+  duration            duration?             @relation(fields: [durationId], references: [id])
+  categoryId          Int?
+  category            category?             @relation(fields: [categoryId], references: [id])
+  providerId          String?
+  provider            provider?             @relation(fields: [providerId], references: [id])
+  serviceQuestions    serviceQuestion[]
+  memberships         membership[]
+  products            product[]
+  appointments        Appointment[]
+  bookings            Booking[]
   ServiceAvailability ServiceAvailability[]
-  locations Location[]
+  siteId              String?
+  site                Site?                 @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  locations           Location[]
+
+  @@index([siteId])
   @@index([categoryId])
   @@index([providerId])
 }
-
-
 
 enum AppointmentStatus {
   PENDING
@@ -179,7 +196,6 @@ enum AppointmentStatus {
   CANCELED
   COMPLETED
 }
-
 
 model Location {
   id             String              @id @default(cuid())
@@ -189,73 +205,89 @@ model Location {
   state          String
   zipCode        String
   country        String
-  services       service[]           // ??? @relation(references: [id])
+  services       service[]
   workingHours   companyWorkingHours @relation(fields: [workingHoursId], references: [id])
   workingHoursId String
   company        company             @relation(fields: [companyId], references: [id])
-  companyId      Int                 // ????? ??? ?? String ?? Int
+  companyId      Int
 
   @@index([workingHoursId])
   @@index([companyId])
 }
 
 model Booking {
-  id                String      @id @default(cuid())
-  userId            String
-  user              User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  serviceId         String
-  service           service     @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-  providerId        String
-  provider          provider    @relation(fields: [providerId], references: [id], onDelete: Cascade)
-  appointmentId     String
-  appointment       Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
-  bookingDate       DateTime    @default(now())
-  status            BookingStatus @default(PENDING)
-  createdAt         DateTime    @default(now())
-  updatedAt         DateTime    @updatedAt
+  id            String        @id @default(cuid())
+  customerId    String
+  customer      Customer      @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  serviceId     String
+  service       service       @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  providerId    String
+  provider      provider      @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  appointmentId String
+  appointment   Appointment   @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  bookingDate   DateTime      @default(now())
+  status        BookingStatus @default(PENDING)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
 
-  @@index([userId])
+  @@index([customerId])
   @@index([serviceId])
   @@index([providerId])
   @@index([appointmentId])
 }
 
+model Customer {
+  id           String        @id @default(cuid())
+  name         String?
+  email        String        @unique
+  phoneNumber  String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  appointments Appointment[]
+  bookings     Booking[]
+
+  @@index([email])
+}
+
 model provider {
-  id              String    @id @default(cuid())
-  name            String    @unique
-  description     String
-  image           String
-  phone           String
-  email           String
-  maxCapacity     Int
-  bookingLink     String
-  isOnBookingPage Boolean   @default(false)
-  services        service[]
+  id                  String                @id @default(cuid())
+  name                String                @unique
+  description         String?
+  image               String?
+  phone               String?
+  email               String?
+  maxCapacity         Int
+  bookingLink         String?
+  siteId              String?
+  site                Site?                 @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  isOnBookingPage     Boolean               @default(false)
+  services            service[]
   ServiceAvailability ServiceAvailability[]
-  Appointment Appointment[]
-  Booking Booking[] // ????? ???? ??? ???? ???? ????? ??????? ??? Booking
+  Appointment         Appointment[]
+  Booking             Booking[]
+
+  @@index([siteId])
 }
 
 model Appointment {
-  id           String   @id @default(cuid())
-  userId       String
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  serviceId    String
-  service      service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-  providerId   String
-  provider     provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  id              String            @id @default(cuid())
+  customerId      String
+  customer        Customer          @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  serviceId       String
+  service         service           @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  providerId      String
+  provider        provider          @relation(fields: [providerId], references: [id], onDelete: Cascade)
   appointmentTime DateTime
-  duration     Int
-  status       AppointmentStatus @default(PENDING)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  Booking Booking[] // ????? ???? ??? ???? ???? ????? ??????? ??? Booking
+  duration        Int
+  status          AppointmentStatus @default(PENDING)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  Booking         Booking[]
 
-  @@index([userId])
+  @@index([customerId])
   @@index([serviceId])
   @@index([providerId])
 }
-
 
 enum BookingStatus {
   PENDING
@@ -265,19 +297,18 @@ enum BookingStatus {
 }
 
 model ServiceAvailability {
-  id        String   @id @default(cuid())
-  date      DateTime
-  startTime DateTime
-  endTime   DateTime
-  service   service  @relation(fields: [serviceId], references: [id])
-  serviceId String
-  provider  provider @relation(fields: [providerId], references: [id])
+  id         String   @id @default(cuid())
+  date       DateTime
+  startTime  DateTime
+  endTime    DateTime
+  service    service  @relation(fields: [serviceId], references: [id])
+  serviceId  String
+  provider   provider @relation(fields: [providerId], references: [id])
   providerId String
 
   @@index([serviceId])
   @@index([providerId])
 }
-
 
 model product {
   id                String   @id @default(cuid())
@@ -286,7 +317,7 @@ model product {
   image             String
   description       String
   price             Decimal
-  vat               Decimal   //مالبات بر ارزس  افزوده
+  vat               Decimal //مالبات بر ارزس  افزوده
   productLocation   String
   isOnBookingPage   Boolean  @default(false)
   addToBookingPrice Boolean  @default(false)
@@ -327,10 +358,12 @@ model serviceQuestion {
   serviceId          String
   service            service  @relation(fields: [serviceId], references: [id])
 }
+
 model serviceTime {
-  value              Int   @id @default(autoincrement())
-  label              String
+  value Int    @id @default(autoincrement())
+  label String
 }
+
 enum FildType {
   CHECKBOX
   TEXTBox_SingleLine
@@ -341,8 +374,6 @@ enum FildType {
   BARCODE
   HTML_Custom
 }
-
-
 
 model Post {
   id                    String               @id @default(cuid())
@@ -374,7 +405,6 @@ model Post {
   @@index([userId])
 }
 
-
 model company {
   id               Int                   @id @default(autoincrement())
   name             String                @unique
@@ -395,21 +425,21 @@ model company {
   contactUs        String
   faq              Json                  @default("{}") @db.JsonB
   workingHours     companyWorkingHours[]
-  locations Location[]
+  locations        Location[]
 }
 
 model companyWorkingHours {
-  id         String    @id @default(cuid())
-  companyId  Int       @unique
-  company    company   @relation(fields: [companyId], references: [id])
-  dayOfWeek  Dayofweek @default(MONDAY)
+  id         String     @id @default(cuid())
+  companyId  Int        @unique
+  company    company    @relation(fields: [companyId], references: [id])
+  dayOfWeek  Dayofweek  @default(MONDAY)
   isOpen     Boolean
-  openTime   DateTime  @db.Time()
-  closeTime  DateTime  @db.Time()
-  breakStart DateTime  @db.Time()
-  breakEnd   DateTime  @db.Time()
+  openTime   DateTime   @db.Time()
+  closeTime  DateTime   @db.Time()
+  breakStart DateTime   @db.Time()
+  breakEnd   DateTime   @db.Time()
   post       Post[]
-  locations Location[]
+  locations  Location[]
 }
 
 enum Dayofweek {

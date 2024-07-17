@@ -1,7 +1,7 @@
 'use client'
 import React, { useState, useEffect } from 'react';
 import { Calendar, DayValue } from 'react-x-calendar';
-import "react-modern-calendar-datepicker/lib/DatePicker.css";
+import "react-x-calendar/lib/DatePicker.css";
 
 interface TimeSlot {
   start: string; // Format: 'HH:mm'
@@ -42,7 +42,7 @@ const isHoliday = (date: string): boolean => {
 };
 
 const formatDate = (date: DayValue): string => {
-  return `${date.year}-${String(date.month).padStart(2, '0')}-${String(date.day).padStart(2, '0')}`;
+  return `${date?.year}-${String(date?.month).padStart(2, '0')}-${String(date?.day).padStart(2, '0')}`;
 };
 
 const AppointmentBooking: React.FC = () => {
