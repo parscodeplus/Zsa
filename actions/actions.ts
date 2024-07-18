@@ -15,18 +15,25 @@ export async function GetCategory({
   offset?: number
   limit?: number
 }) {
-  const data = await prisma.category.findMany({
-    where: { name: { contains: search } },
-    skip: offset,
-    take: limit,
-  })
-
-  const totalCount = await prisma.category.count({
-    where: { name: { contains: search } },
-  })
-  const totalPages = Math.ceil(totalCount / limit)
-
-  return { data, totalCount, totalPages }
+  try {
+    const data = await prisma.category.findMany({
+      where: { name: { contains: search } },
+      skip: offset,
+      take: limit,
+    })
+  
+    const totalCount = await prisma.category.count({
+      where: { name: { contains: search } },
+    })
+    const totalPages = Math.ceil(totalCount / limit)
+  
+    return { data, totalCount, totalPages }
+  } catch (error) {
+    return {
+      message: 'Database Error: Failed to Select Category.',
+    };
+  }
+ 
 }
 export const InsertCategory = createServerAction()
   .input(

@@ -41,12 +41,16 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   isPending: boolean;
+  totalPages?:number;
+  limit?:number;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-  isPending
+  isPending,
+  totalPages,
+  limit,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
@@ -132,11 +136,13 @@ export function DataTable<TData, TValue>({
             </TableHeader>
             <TableBody>
               {isPending ? (
-                <TableRow>
-                  <TableCell colSpan={columns.length} className='h-24 text-center'>
-                    <Skeleton className='w-full h-24' />
-                  </TableCell>
-                </TableRow>
+                Array.from({ length: limit || pageSize }).map((_, index) => (
+                  <TableRow key={index}>
+                    <TableCell colSpan={columns.length} className='h-8 text-center'>
+                      <Skeleton className='w-full h-8' />
+                    </TableCell>
+                  </TableRow>
+                ))
               ) : (
                 table.getRowModel().rows?.length ? (
                   table.getRowModel().rows.map((row) => (

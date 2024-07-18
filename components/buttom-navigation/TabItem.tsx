@@ -35,7 +35,7 @@ const TabItem: FC<TabItemProps> = ({ tab, isActive, onClick }) => {
           >
             <tab.icon
               className={`transition-top relative h-6 w-6 duration-300 text-primary dark:text-secondary ${
-                isActive ? '-top-1 text-primary dark:text-secondary animate-bounce duration-700' : 'top-0  mix-blend-normal'
+                isActive ? '-top-1 text-primary dark:text-secondary animate-bounce duration-1000' : 'top-0  mix-blend-normal'
               }`}
             />
           </button>

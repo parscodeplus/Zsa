@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react';
 
 import { useServerAction } from 'zsa-react';
 import { FetchCategries } from '@/actions/actions';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight,ArrowRightToLine,ArrowLeftToLine } from 'lucide-react';
 import { Button } from './ui/button';
 import { InputNumber } from './ui/input-number';
 import {
@@ -52,11 +52,18 @@ export default function CategoryTable() {
     <div>
       <h1 className='px-4 text-2xl font-semibold'>User List</h1>
       <DataTable
+        limit={parseInt(limit)}
         isPending={isPending}
         columns={categoryColumns}
         data={Category}
       />
-      <div className='flex flex-row justify-between items-center px-4'>
+      <div className='flex flex-row-reverse space-x-1 justify-between items-center px-4'>
+      <Button
+          className={pageIndex - 1 === 0 ? `pointer-events-none opacity-50` : ''}
+          onClick={() => setPageIndex(1)}
+        >
+          <ArrowLeftToLine />
+        </Button>
         <Button
           className={pageIndex - 1 === 0 ? `pointer-events-none opacity-50` : ''}
           onClick={() => setPageIndex(pageIndex - 1)}
@@ -84,8 +91,13 @@ export default function CategoryTable() {
         >
           <ChevronRight />
         </Button>
+        <Button
+          className={pageIndex >= totalPages ? `pointer-events-none opacity-50` : ''}
+          onClick={() => setPageIndex(totalPages)}
+        >
+          <ArrowRightToLine />
+        </Button>
       </div>
-      {limit.toString()}
       <br />
       <br />
       <br />

@@ -12,7 +12,7 @@ const navigation: INavigation[] = [
 
 export default function Navbar() {
   return (
-    <header className='sticky top-0 z-50 w-full border-b border-muted bg-gradient-to-b from-background/10 via-background/50 to-background/80 shadow-[0_5px_5px_rgba(240,_46,_170,_0.7)] backdrop-blur-xl'>
+    <header className='sticky top-0 z-50 w-full border-b border-muted  shadow-[0_3px_10px_rgb(0,0,0,0.2)] backdrop-blur-lg dark:border-secondary-foreground'>
       <nav
         className='container flex h-16 max-w-7xl items-center justify-between px-4 py-6 sm:px-6 lg:px-8'
         aria-label='Global'
