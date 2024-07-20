@@ -40,67 +40,109 @@ model User {
   country               String?
   // Add relation to customFeatures
   customFeatures        CustomFeature[]
+  scheduledEmails       ScheduledEmail[]
 
+  freePanelStartDate DateTime?
+  freePanelEndDate   DateTime?
+  isFreePanelActive  Boolean     @default(false)
+  freePanel          FreePanel[] 
   @@index([categoryId])
 }
 
+model FreePanel {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  startDate DateTime @default(now())
+  endDate   DateTime
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model ScheduledEmail {
+  id        String      @id @default(cuid())
+  userId    String
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  emailType EmailType
+  sendAt    DateTime
+  status    EmailStatus @default(PENDING)
+  subject   String
+  body      String      @db.Text
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@index([userId])
+}
+
+enum EmailType {
+  WELCOME
+  EXPIRATION_WARNING
+  PROMOTION
+}
+
+enum EmailStatus {
+  PENDING
+  SENT
+  FAILED
+}
+
 model Site {
-  id            String               @id @default(cuid())
-  name          String?
-  description   String?              @db.Text
-  logo          String?              @default("https://public.blob.vercel-storage.com/eEZHAoPTOBSYGBE3/JRajRyC-PhBHEinQkupt02jqfKacBVHLWJq7Iy.png") @db.Text
-  font          String               @default("font-cal")
-  image         String?              @default("https://public.blob.vercel-storage.com/eEZHAoPTOBSYGBE3/hxfcV5V-eInX3jbVUhjAt1suB7zB88uGd1j20b.png") @db.Text
-  imageBlurhash String?              @default("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAhCAYAAACbffiEAAAACXBIWXMAABYlAAAWJQFJUiTwAAABfUlEQVR4nN3XyZLDIAwE0Pz/v3q3r55JDlSBplsIEI49h76k4opexCK/juP4eXjOT149f2Tf9ySPgcjCc7kdpBTgDPKByKK2bTPFEdMO0RDrusJ0wLRBGCIuelmWJAjkgPGDSIQEMBDCfA2CEPM80+Qwl0JkNxBimiaYGOTUlXYI60YoehzHJDEm7kxjV3whOQTD3AaCuhGKHoYhyb+CBMwjIAFz647kTqyapdV4enGINuDJMSScPmijSwjCaHeLcT77C7EC0C1ugaCTi2HYfAZANgj6Z9A8xY5eiYghDMNQBJNCWhASot0jGsSCUiHWZcSGQjaWWCDaGMOWnsCcn2QhVkRuxqqNxMSdUSElCDbp1hbNOsa6Ugxh7xXauF4DyM1m5BLtCylBXgaxvPXVwEoOBjeIFVODtW74oj1yBQah3E8tyz3SkpolKS9Geo9YMD1QJR1Go4oJkgO1pgbNZq0AOUPChyjvh7vlXaQa+X1UXwKxgHokB2XPxbX+AnijwIU4ahazAAAAAElFTkSuQmCC") @db.Text
-  subdomain     String?              @unique
-  customDomain  String?              @unique
-  message404    String?              @default("Blimey! You've found a page that doesn't exist.") @db.Text
-  createdAt     DateTime             @default(now())
-  updatedAt     DateTime             @updatedAt
-  user          User?                @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId        String?
-  posts         Post[]
-  providers     provider[]
-  services      service[]
+  id             String              @id @default(cuid())
+  name           String?
+  description    String?             @db.Text
+  logo           String?             @default("https://public.blob.vercel-storage.com/eEZHAoPTOBSYGBE3/JRajRyC-PhBHEinQkupt02jqfKacBVHLWJq7Iy.png") @db.Text
+  font           String              @default("font-cal")
+  image          String?             @default("https://public.blob.vercel-storage.com/eEZHAoPTOBSYGBE3/hxfcV5V-eInX3jbVUhjAt1suB7zB88uGd1j20b.png") @db.Text
+  imageBlurhash  String?             @default("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAhCAYAAACbffiEAAAACXBIWXMAABYlAAAWJQFJUiTwAAABfUlEQVR4nN3XyZLDIAwE0Pz/v3q3r55JDlSBplsIEI49h76k4opexCK/juP4eXjOT149f2Tf9ySPgcjCc7kdpBTgDPKByKK2bTPFEdMO0RDrusJ0wLRBGCIuelmWJAjkgPGDSIQEMBDCfA2CEPM80+Qwl0JkNxBimiaYGOTUlXYI60YoehzHJDEm7kxjV3whOQTD3AaCuhGKHoYhyb+CBMwjIAFz647kTqyapdV4enGINuDJMSScPmijSwjCaHeLcT77C7EC0C1ugaCTi2HYfAZANgj6Z9A8xY5eiYghDMNQBJNCWhASot0jGsSCUiHWZcSGQjaWWCDaGMOWnsCcn2QhVkRuxqqNxMSdUSElCDbp1hbNOsa6Ugxh7xXauF4DyM1m5BLtCylBXgaxvPXVwEoOBjeIFVODtW74oj1yBQah3E8tyz3SkpolKS9Geo9YMD1QJR1Go4oJkgO1pgbNZq0AOUPChyjvh7vlXaQa+X1UXwKxgHokB2XPxbX+AnijwIU4ahazAAAAAElFTkSuQmCC") @db.Text
+  subdomain      String?             @unique
+  customDomain   String?             @unique
+  message404     String?             @default("Blimey! You've found a page that doesn't exist.") @db.Text
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+  user           User?               @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId         String?
+  posts          Post[]
+  providers      provider[]
+  services       service[]
   dailySchedules SiteDailySchedule[]
 
   @@index([userId])
 }
 
 model SiteDailySchedule {
-  id            String           @id @default(cuid())
-  dayOfWeek     Dayofweek
-  siteId        String
-  site          Site             @relation(fields: [siteId], references: [id], onDelete: Cascade)
-  workTimes     SiteWorkTime[]
-  breakTimes    SiteBreakTime[]
-  isWorkingDay  Boolean          @default(true)
+  id           String          @id @default(cuid())
+  dayOfWeek    Dayofweek
+  siteId       String
+  site         Site            @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  workTimes    SiteWorkTime[]
+  breakTimes   SiteBreakTime[]
+  isWorkingDay Boolean         @default(true)
 
   @@index([siteId])
 }
 
 model SiteWorkTime {
-  id                    String            @id @default(cuid())
-  startTime             DateTime
-  endTime               DateTime
-  siteDailyScheduleId   String
-  siteDailySchedule     SiteDailySchedule @relation(fields: [siteDailyScheduleId], references: [id], onDelete: Cascade)
+  id                  String            @id @default(cuid())
+  startTime           DateTime
+  endTime             DateTime
+  siteDailyScheduleId String
+  siteDailySchedule   SiteDailySchedule @relation(fields: [siteDailyScheduleId], references: [id], onDelete: Cascade)
 
   @@index([siteDailyScheduleId])
 }
 
 model SiteBreakTime {
-  id                    String            @id @default(cuid())
-  startTime             DateTime
-  endTime               DateTime
-  siteDailyScheduleId   String
-  siteDailySchedule     SiteDailySchedule @relation(fields: [siteDailyScheduleId], references: [id], onDelete: Cascade)
+  id                  String            @id @default(cuid())
+  startTime           DateTime
+  endTime             DateTime
+  siteDailyScheduleId String
+  siteDailySchedule   SiteDailySchedule @relation(fields: [siteDailyScheduleId], references: [id], onDelete: Cascade)
 
   @@index([siteDailyScheduleId])
 }
-
-
-
 
 model Account {
   id                 String  @id @default(cuid())
@@ -169,31 +211,30 @@ model TwoFactorConfirmation {
   @@unique([userId])
 }
 
-
 model FeatureGroup {
-  id             String          @id @default(cuid())
-  name           String
-  features       CustomFeature[]
+  id       String          @id @default(cuid())
+  name     String
+  features CustomFeature[]
 
   @@index([name])
 }
 
 model CustomFeature {
-  id             String   @id @default(cuid())
+  id             String        @id @default(cuid())
   title          String
-  shortDesc      String?  @db.Text
-  longDesc       String?  @db.Text
+  shortDesc      String?       @db.Text
+  longDesc       String?       @db.Text
   image          String?
   status         FeatureStatus
-  isActive       Boolean  @default(true)
-  warningMessage String?  @default("??? ????? ?????? ??? ????")
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  isActive       Boolean       @default(true)
+  warningMessage String?       @default("??? ????? ?????? ??? ????")
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 
-  userId         String?
-  user           User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  groupId        String
-  group          FeatureGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  userId  String?
+  user    User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  groupId String
+  group   FeatureGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([groupId])
@@ -205,8 +246,6 @@ enum FeatureStatus {
   MARKETING
   NEW
 }
-
-
 
 model category {
   id                  Int     @id @default(autoincrement())
@@ -237,13 +276,14 @@ model duration {
 }
 
 model ServiceDailySchedule {
-  id             String           @id @default(cuid())
-  dayOfWeek      Dayofweek
-  serviceId      String
-  service        service          @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-  workTimes      ServiceWorkTime[]
-  breakTimes     ServiceBreakTime[]
-  isWorkingDay  Boolean      @default(true)
+  id           String             @id @default(cuid())
+  dayOfWeek    Dayofweek
+  serviceId    String
+  service      service            @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  workTimes    ServiceWorkTime[]
+  breakTimes   ServiceBreakTime[]
+  isWorkingDay Boolean            @default(true)
+
   @@index([serviceId])
 }
 
@@ -258,41 +298,41 @@ enum Dayofweek {
 }
 
 model ServiceWorkTime {
-  id                    String                 @id @default(cuid())
-  startTime             DateTime
-  endTime               DateTime
+  id                     String               @id @default(cuid())
+  startTime              DateTime
+  endTime                DateTime
   serviceDailyScheduleId String
-  serviceDailySchedule   ServiceDailySchedule  @relation(fields: [serviceDailyScheduleId], references: [id], onDelete: Cascade)
+  serviceDailySchedule   ServiceDailySchedule @relation(fields: [serviceDailyScheduleId], references: [id], onDelete: Cascade)
 
   @@index([serviceDailyScheduleId])
 }
 
 model ServiceBreakTime {
-  id                    String                 @id @default(cuid())
-  startTime             DateTime
-  endTime               DateTime
+  id                     String               @id @default(cuid())
+  startTime              DateTime
+  endTime                DateTime
   serviceDailyScheduleId String
-  serviceDailySchedule   ServiceDailySchedule  @relation(fields: [serviceDailyScheduleId], references: [id], onDelete: Cascade)
+  serviceDailySchedule   ServiceDailySchedule @relation(fields: [serviceDailyScheduleId], references: [id], onDelete: Cascade)
 
   @@index([serviceDailyScheduleId])
 }
 
 model service {
-  id                  String                @id @default(cuid())
-  name                String                @unique
+  id                  String                 @id @default(cuid())
+  name                String                 @unique
   description         String?
   image               String?
-  isOnMainPage        Boolean               @default(false)
+  isOnMainPage        Boolean                @default(false)
   price               Decimal
   salesTax            Decimal?
   directLink          String?
   maxBookingPerSlot   Int?
   durationId          Int
-  duration            duration?             @relation(fields: [durationId], references: [id])
+  duration            duration?              @relation(fields: [durationId], references: [id])
   categoryId          Int?
-  category            category?             @relation(fields: [categoryId], references: [id])
+  category            category?              @relation(fields: [categoryId], references: [id])
   providerId          String?
-  provider            provider?             @relation(fields: [providerId], references: [id])
+  provider            provider?              @relation(fields: [providerId], references: [id])
   serviceQuestions    serviceQuestion[]
   memberships         membership[]
   products            product[]
@@ -300,7 +340,7 @@ model service {
   bookings            Booking[]
   ServiceAvailability ServiceAvailability[]
   siteId              String?
-  site                Site?                 @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  site                Site?                  @relation(fields: [siteId], references: [id], onDelete: Cascade)
   locations           Location[]
   dailySchedules      ServiceDailySchedule[]
 
@@ -308,7 +348,6 @@ model service {
   @@index([categoryId])
   @@index([providerId])
 }
-
 
 enum AppointmentStatus {
   PENDING
@@ -368,24 +407,23 @@ model Customer {
 
   @@index([email])
 }
+
 model ProviderDailySchedule {
-  id             String           @id @default(cuid())
-  dayOfWeek      Dayofweek
-  providerId     String
-  provider       provider         @relation(fields: [providerId], references: [id], onDelete: Cascade)
-  workTimes      WorkTime[]
-  breakTimes     BreakTime[]
-  isWorkingDay  Boolean      @default(true)
+  id           String      @id @default(cuid())
+  dayOfWeek    Dayofweek
+  providerId   String
+  provider     provider    @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  workTimes    WorkTime[]
+  breakTimes   BreakTime[]
+  isWorkingDay Boolean     @default(true)
 
   @@index([providerId])
 }
 
-
-
 model WorkTime {
-  id                    String                @id @default(cuid())
-  startTime             DateTime
-  endTime               DateTime
+  id                      String                @id @default(cuid())
+  startTime               DateTime
+  endTime                 DateTime
   providerDailyScheduleId String
   providerDailySchedule   ProviderDailySchedule @relation(fields: [providerDailyScheduleId], references: [id], onDelete: Cascade)
 
@@ -393,9 +431,9 @@ model WorkTime {
 }
 
 model BreakTime {
-  id                    String                @id @default(cuid())
-  startTime             DateTime
-  endTime               DateTime
+  id                      String                @id @default(cuid())
+  startTime               DateTime
+  endTime                 DateTime
   providerDailyScheduleId String
   providerDailySchedule   ProviderDailySchedule @relation(fields: [providerDailyScheduleId], references: [id], onDelete: Cascade)
 
@@ -403,8 +441,8 @@ model BreakTime {
 }
 
 model provider {
-  id                  String                @id @default(cuid())
-  name                String                @unique
+  id                  String                  @id @default(cuid())
+  name                String                  @unique
   description         String?
   image               String?
   phone               String?
@@ -412,8 +450,8 @@ model provider {
   maxCapacity         Int
   bookingLink         String?
   siteId              String?
-  site                Site?                 @relation(fields: [siteId], references: [id], onDelete: Cascade)
-  isOnBookingPage     Boolean               @default(false)
+  site                Site?                   @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  isOnBookingPage     Boolean                 @default(false)
   services            service[]
   ServiceAvailability ServiceAvailability[]
   Appointment         Appointment[]
@@ -422,7 +460,6 @@ model provider {
 
   @@index([siteId])
 }
-
 
 model Appointment {
   id              String            @id @default(cuid())
@@ -596,8 +633,6 @@ model companyWorkingHours {
   post       Post[]
   locations  Location[]
 }
-
-
 
 model userGroup {
   id          Int     @id @default(autoincrement())

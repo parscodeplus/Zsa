@@ -13,7 +13,7 @@ import {
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Input } from "../ui/input";
-import ProgressBar from "../ui/progress";
+import ProgressBar from "@/components/ui/progress";
 import { ScrollArea } from "../ui/scroll-area";
 interface FileUploadProgress {
   progress: number;
