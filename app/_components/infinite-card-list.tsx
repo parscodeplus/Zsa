@@ -14,7 +14,15 @@ interface IProps {
   search: string
   limit: number
 }
-
+interface newData {
+  id: number;
+  name: string;
+  description: string;
+  image: string | null;
+  isVisibleOnMainPage: boolean;
+  isFeatured: boolean;
+  position: number;
+}[]
 export default function InfiniteCardList({ initialData, search, limit }: IProps) {
   const [data, setData] = useState(initialData)
   const [page, setPage] = useState(1)
@@ -26,7 +34,7 @@ export default function InfiniteCardList({ initialData, search, limit }: IProps)
     const offset = next * limit
     const { data: newData } = await GetCategory({ search, offset, limit })
 
-    if (newData.length) {
+    if (newData) {
       setPage(next)
       setData((prev: Category[] | undefined) => [
         ...(prev?.length ? prev : []),

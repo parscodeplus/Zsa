@@ -32,14 +32,14 @@ const nextConfig = {
   // },
   reactStrictMode: true,
 
-  webpack: (config) => {
-    config.watchOptions = {
-		poll: true,
-      aggregateTimeout: 300,
-      ignored: ['**/node_modules/**', '**/.git/**', '**/.next/**'],
-    };
-    return config;
-  },
+  // webpack: (config) => {
+  //   config.watchOptions = {
+	// 	poll: true,
+  //     aggregateTimeout: 300,
+  //     ignored: ['**/node_modules/**', '**/.git/**', '**/.next/**'],
+  //   };
+  //   return config;
+  // },
 };
 
 export default nextConfig;

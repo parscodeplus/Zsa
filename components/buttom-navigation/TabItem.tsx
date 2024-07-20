@@ -14,8 +14,8 @@ const TabItem: FC<TabItemProps> = ({ tab, isActive, onClick }) => {
     <Link href={tab.path}>
       <div
         onClick={() => onClick(tab.id)}
-        className={`relative rounded-full px-2 text-sm font-medium text-foreground outline-sky-400 transition focus-visible:outline-2 ${
-          isActive ? 'relative text-primary dark:text-primary-foreground' : 'hover:text-white/60'
+        className={`relative rounded-full px-2 text-sm font-medium text-primary outline-sky-400 transition focus-visible:outline-2 ${
+          isActive ? 'relative text-primary ' : 'hover:text-white/60'
         }`}
         style={{ WebkitTapHighlightColor: 'transparent' }}
       >
@@ -34,14 +34,14 @@ const TabItem: FC<TabItemProps> = ({ tab, isActive, onClick }) => {
             }`}
           >
             <tab.icon
-              className={`transition-top relative h-6 w-6 duration-300 text-primary dark:text-secondary ${
-                isActive ? '-top-1 text-primary dark:text-secondary animate-bounce duration-1000' : 'top-0  mix-blend-normal'
+              className={`transition-top relative h-6 w-6 duration-1000 text-gray-700 dark:text-white ${
+                isActive ? '-top-1  text-gray-700 dark:text-white animate-bounce duration-1000' : 'top-0  mix-blend-normal'
               }`}
             />
           </button>
           <div
             className={`transition-top relative duration-300 ${
-              isActive ? '-top-3  text-primary dark:text-secondary' : 'top-1  mix-blend-normal'
+              isActive ? '-top-3   text-gray-700 dark:text-white' : 'top-1  mix-blend-normal'
             }`}
           >
             {isActive && tab.id}

@@ -2,10 +2,73 @@
 import { createServerAction } from 'zsa';
 import z from 'zod';
 import prisma from '@/libs/prisma';
-import { Category, Option, User } from '@/types';
+import { Category, Option, User, UserGroup } from '@/types';
 import { serviceSchema } from '@/schemas/serviceSchema';
 import { durationSchema } from '@/schemas/durationSchema';
 import { providerSchema } from '@/schemas/providerSchema';
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+
+export async function createSuggestedService(formData: FormData) {
+  const name = formData.get("name")?.toString();
+  const description = formData.get("description")?.toString();
+  const categoryId = formData.get("categoryId")?.toString();
+
+  if (!name || !description || !categoryId) {
+    return;
+  }
+
+  const newTask = await prisma.suggestedService.create({
+    data: {
+      name: name,
+      description: description,
+      categoryId:parseInt(categoryId)
+    },
+  });
+
+  redirect("/");
+}
+
+export async function removeSuggestedService(formData: FormData) {
+  "use server";
+  const suggestedServiceId = formData.get("id")?.toString();
+
+  if (!suggestedServiceId) {
+    return;
+  }
+
+  await prisma.suggestedService.delete({
+    where: {
+      id: parseInt(suggestedServiceId),
+    },
+  });
+
+  revalidatePath("/");
+}
+
+export async function updateSuggestedService(formData: FormData) {
+  const id = formData.get("id")?.toString();
+  const name = formData.get("name")?.toString();
+  const description = formData.get("description")?.toString();
+  const categoryId = formData.get("categoryId")?.toString();
+
+  if (!id || !name || !description || !categoryId) {
+    return;
+  }
+
+  await prisma.suggestedService.update({
+    where: {
+      id: parseInt(id),
+    },
+    data: {
+      name: name,
+      description: description,
+      categoryId: parseInt(categoryId),
+    }
+  });
+  
+  redirect("/");
+}
 export async function GetCategory({
   search,
   offset = 0,
@@ -70,6 +133,24 @@ export const FindCategory = createServerAction()
     } catch (error) {
       console.error('FindCategory error:', error);
       throw new Error('Failed to find category');
+    }
+  });
+
+  export const removeCategory = createServerAction()
+  .input(
+    z.object({
+      id: z.number(),
+    }),
+  )
+  .handler(async ({ input }) => {
+    try {
+      const category = await prisma.category.delete({
+        where: { id: input.id },
+      });
+      return !!category;
+    } catch (error) {
+      console.error('remove Category error:', error);
+      throw new Error('Remove to find category');
     }
   });
 
@@ -198,6 +279,45 @@ export const FetchCategries = createServerAction()
       throw new Error('Failed to fetch categories');
     }
   });
+
+
+export const FetchUserGroup = createServerAction()
+.retry({
+  maxAttempts: 3,
+  delay: (currentAttempt, err) => {
+    return 1000 * currentAttempt;
+  },
+})
+.input(
+  z.object({
+    search:z.string().optional(),
+    offset: z.number().default(0),
+    limit: z.number().default(5),
+  }),
+)
+.handler(async ({ input }) => {
+  try {
+    const fetchUserGroup: UserGroup[] = await prisma.userGroup.findMany({
+      where: { name: { contains: input.search } },
+
+      skip: input.offset,
+      take: input.limit,
+
+      orderBy: {
+        id: 'asc',
+      },
+    });
+    const totalCount = await prisma.userGroup.count({
+      where: { name: { contains: input.search } },
+    })
+    const totalPages = Math.ceil(totalCount / input.limit)
+    return { fetchUserGroup, totalCount, totalPages }
+  } catch (error) {
+    console.error('Categries error:', error);
+    throw new Error('Failed to fetch categories');
+  }
+});
+
 
 export const FetchUsers = createServerAction()
   .retry({

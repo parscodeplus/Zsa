@@ -8,6 +8,22 @@ export interface Option {
   [key: string]: string | boolean | undefined;
 }
 
+type JsonValue = 
+  | string 
+  | number 
+  | boolean 
+  | null 
+  | { [key: string]: JsonValue }
+  | JsonValue[];
+export type UserGroup = {
+  id: number;
+  name: string;
+  description: string;
+  permissions: Record<string, any> | any; 
+  userId?: string | null; 
+  user?: User; 
+};
+
 export type User = {
   id: string;
   name: string | null;

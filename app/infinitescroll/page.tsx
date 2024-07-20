@@ -22,9 +22,12 @@ export default async function InfiniteScrollPage({
       <div className="mb-3">
         <SearchPokemon />
       </div>
-      <Suspense key={search} fallback={<SkeletonCardList />}>
+      {initialData && (
+        <Suspense key={search} fallback={<SkeletonCardList />}>
         <InfiniteCardList search={search} initialData={initialData} limit={limit} />
       </Suspense>
+      )}
+      
     </>
   )
 }

@@ -158,7 +158,7 @@ export default function Btn() {
 
           if (err) {
             toast({
-              variant: 'error',
+              variant: 'destructive',
               title: 'ا در ثبت کاتالوگ  ',
               description: 'ثبت ای اتفاق افتاد است     ' + err.message,
               //action: <ToastAction altText="Try again">Try again</ToastAction>,

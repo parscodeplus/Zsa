@@ -30,8 +30,8 @@ import { Pencil } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Switch } from "@/components/ui/switch";
 import { LoadingButton } from "@/components/ui/loading-button";
+import { Textarea } from "@/components/ui/textarea";
 
-// ???? ???? ????? ??????? ?? ????
 async function updateDataOnServer(data: any) {
   const response = await fetch('/api/update', {
     method: 'POST',
@@ -62,6 +62,8 @@ export const UpdateAction = <T extends Record<string, any>>({ rowData, handleUpd
           schema[key] = z.boolean();
         } else if (typeof rowData[key] === "number") {
           schema[key] = z.number();
+        } else if (typeof rowData[key] === "object") {
+          schema[key] = z.any();
         } else {
           schema[key] = z.string().optional();
         }
@@ -86,9 +88,9 @@ export const UpdateAction = <T extends Record<string, any>>({ rowData, handleUpd
           </pre>
         ),
       });
-    } catch (error:any) {
+    } catch (error: any) {
       toast({
-        variant:"destructive",
+        variant: "destructive",
         title: "Error updating data",
         description: error.message,
       });
@@ -112,6 +114,24 @@ export const UpdateAction = <T extends Record<string, any>>({ rowData, handleUpd
         <Input
           type="number"
           {...form.register(key as keyof z.infer<typeof formSchema>, { valueAsNumber: true })}
+          disabled={isDisabled}
+        />
+      );
+    } else if (typeof value === "object") {
+      return (
+        <Textarea
+          value={JSON.stringify(value)}
+          {...form.register(key as keyof z.infer<typeof formSchema>)}
+
+          onChange={(e) => {
+            try {
+              const parsedValue = JSON.parse(e.target.value);
+              form.setValue(key as keyof z.infer<typeof formSchema>, parsedValue);
+            } catch (err) {
+              // Handle JSON parsing error
+              console.error("Invalid JSON");
+            }
+          }}
           disabled={isDisabled}
         />
       );
