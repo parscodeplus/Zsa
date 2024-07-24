@@ -8,7 +8,6 @@ import { durationSchema } from '@/schemas/durationSchema';
 import { providerSchema } from '@/schemas/providerSchema';
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-
 export async function createSuggestedService(formData: FormData) {
   const name = formData.get("name")?.toString();
   const description = formData.get("description")?.toString();
@@ -202,7 +201,8 @@ export const InsertProvider = createServerAction()
     try {
       const providerPromises = input.providers.map(async (item) => {
         //await new Promise((resolve) => setTimeout(resolve, 50));
-
+        console.log("insert provider start :",item);
+        
         await prisma.provider.create({
           data: {
             name: item.name.trim(),
@@ -212,8 +212,11 @@ export const InsertProvider = createServerAction()
             phone: '',
             email: '',
             bookingLink: '',
+            
           },
         });
+        console.log("insert provider end :",item);
+
       });
       return providerPromises;
     } catch (error) {
@@ -279,7 +282,26 @@ export const FetchCategries = createServerAction()
       throw new Error('Failed to fetch categories');
     }
   });
+  export const GetSelectCategory = createServerAction()
+  .handler(async () => {
+    try {
+      const category = await prisma.category.findMany({
+        select: { id: true, name: true }
+      });
 
+      const result: Option[] = category.map((item) => ({
+        label: item.name, // Corrected the typo from 'lable' to 'label'
+        value: item.id.toString(),
+      }));
+
+      return result;
+    } catch (error) {
+      console.error('FindCategory error:', error);
+      throw new Error('Failed to find category');
+    }
+  });
+
+  
 
 export const FetchUserGroup = createServerAction()
 .retry({

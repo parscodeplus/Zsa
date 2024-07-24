@@ -11,9 +11,10 @@ import { useServerAction } from 'zsa-react';
 import { InsertProvider } from '@/actions/actions';
 import { Separator } from '../ui/separator';
 import { ProviderFormValues, providerSchema } from '@/schemas/providerSchema';
-
+import { useStepper } from '../stepper';
 const AddProvider: React.FC = () => {
   const { isPending, isSuccess, execute, error } = useServerAction(InsertProvider);
+  const { nextStep } = useStepper();
 
   const form = useForm<ProviderFormValues>({
     resolver: zodResolver(providerSchema),
@@ -47,7 +48,6 @@ const AddProvider: React.FC = () => {
         </pre>
       ),
     });
-
     if (err) {
       toast({
         title: 'Error submitting values:',
@@ -57,16 +57,18 @@ const AddProvider: React.FC = () => {
           </pre>
         ),
       });
+      reset();
       return;
     }
 
-    reset();
+    nextStep();
+
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={handleSubmit(onSubmit)} className='container mx-auto p-1' name='add-provider'>
-        <div className='space-y-4'>
+      <form onSubmit={handleSubmit(onSubmit)} className='container mx-auto p-4' name='add-provider'>
+        <div className='space-y-4 space-x-2'>
           <AnimatePresence>
             {fields.map((item, idx) => (
               <ProviderRow
@@ -82,13 +84,13 @@ const AddProvider: React.FC = () => {
         </div>
         <div className='mt-4 flex space-x-2'>
           <Button variant='default' onClick={handleAddRow}>
-            + Add Another Service
+            + Add Another Provider
           </Button>
         </div>
         <Separator className='my-4' />
-        <div className='mt-4'>
-          <Button disabled={isPending} type='submit'>
-            {isPending ? 'Saving...' : 'Save'}
+        <div className='mt-4 w-full'>
+          <Button className='w-full' disabled={isPending} type='submit'>
+            {isPending ? 'Saving...' : 'next page'}
           </Button>
           {isSuccess && <div>Record saved successfully!</div>}
           {error && <div>Error: {JSON.stringify(error.fieldErrors)}</div>}

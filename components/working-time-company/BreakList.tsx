@@ -19,6 +19,7 @@ interface BreakListProps {
     workStart: string,
     workEnd: string,
     isStart: boolean,
+    excludeIndex: number
   ) => string[];
 }
 
@@ -44,11 +45,7 @@ const BreakList: React.FC<BreakListProps> = ({
           filterTimeOptions={filterTimeOptions}
         />
       ))}
-      <Button
-        onClick={() => addBreak(dayIndex)}
-        variant={'default'}
-        // className='rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700'
-      >
+      <Button type='button' onClick={() => addBreak(dayIndex)} variant={'default'}>
         Add break
       </Button>
     </>

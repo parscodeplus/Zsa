@@ -2,14 +2,15 @@ import React from 'react';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../ui/select';
 
 interface TimeSelectProps {
-  value: string;
+  value: string | undefined;
   onChange: (value: string) => void;
   options: string[];
 }
 
 const TimeSelect: React.FC<TimeSelectProps> = ({ value, onChange, options }) => {
+ 
   return (
-    <Select defaultValue={value} onValueChange={onChange}>
+    <Select defaultValue={value || ''} onValueChange={onChange}>
       <SelectTrigger className='w-full'>
         <SelectValue placeholder='Select time' />
       </SelectTrigger>

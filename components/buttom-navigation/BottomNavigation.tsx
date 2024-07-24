@@ -13,7 +13,7 @@ const tabs = [
   { id: 'home', icon: HomeIcon, path: '/' },
   { id: 'bookmark', icon: LayoutDashboard, path: '/contact' },
   { id: 'share', icon: Calendar, path: '/hookform' },
-  { id: 'inbox', icon: Info, path: '/login' },
+  { id: 'inbox', icon: Info, path: '/admin/plugin' },
   { id: 'settings', icon: User, path: '/demo' },
 ];
 

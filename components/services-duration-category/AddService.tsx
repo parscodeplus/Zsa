@@ -13,9 +13,11 @@ import { toast } from '../ui/use-toast';
 import { useServerAction } from 'zsa-react';
 import { InsertService } from '@/actions/actions';
 import { Separator } from '../ui/separator';
+import { useStepper } from '../stepper';
 const AddService: React.FC = () => {
   const { isPending, isSuccess, execute, data, error } =
     useServerAction(InsertService);
+  const { nextStep } = useStepper();
   const form = useForm<ServiceFormValues>({
     resolver: zodResolver(serviceSchema),
   });
@@ -75,17 +77,18 @@ const AddService: React.FC = () => {
           </pre>
         ),
       });
+      reset();
       return;
     }
 
-    reset();
+    nextStep();
   };
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className='container mx-auto p-1'
+        className='container mx-auto p-4'
       >
         <div className='space-y-4'>
           <AnimatePresence>
@@ -111,15 +114,13 @@ const AddService: React.FC = () => {
           addedCategories={addedCategories}
           handleAddRow={handleAddRow}
         />
-        <div className='mt-4'>
-          <Button disabled={isPending} type='submit'>
-            {isPending ? 'Saving...' : 'Save'}
+        <div className='mt-4 w-full'>
+          <Button className='w-full' disabled={isPending} type='submit'>
+            {isPending ? 'Saving...' : 'next page'}
           </Button>
-          {isSuccess && <div>save record</div>}
-          {error && <div>Error: {JSON.stringify(error.fieldErrors)}</div>}
-          <br />
-          <br />
-          <br />
+          {/* {isSuccess && <div>save record</div>} */}
+          {/* {error && <div>Error: {JSON.stringify(error.fieldErrors)}</div>} */}
+        
         </div>
       </form>
     </Form>

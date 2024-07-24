@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { useServerAction } from 'zsa-react';
-import { Categries } from '@/actions/actions';
+import { GetSelectCategory } from '@/actions/actions';
 import { Option } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Trash2Icon } from 'lucide-react';
@@ -29,7 +29,7 @@ const AddService: React.FC = () => {
     { value: '4', label: '30 دقیقه' },
     { value: '5', label: '1 ساعت' },
   ];
-  const { isPending, execute, data } = useServerAction(Categries);
+  const { isPending, execute, data } = useServerAction(GetSelectCategory);
   const [categores, setCategores] = useState<Option[]>([]);
   const [addedCategories, setAddedCategories] = useState<string[]>([]);
   const [selectedtimes, setSelectedtimes] = React.useState<

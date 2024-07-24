@@ -1,10 +1,9 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Checkbox } from '../ui/checkbox';
+import { Switch } from '../ui/switch';
 import TimeSelect from './TimeSelect';
 import BreakList from './BreakList';
 import { DaySchedule, Break } from './types';
-import { Switch } from "@/components/ui/switch"
 
 interface DayCardProps {
   day: DaySchedule;
@@ -14,7 +13,7 @@ interface DayCardProps {
   handleBreakChange: (dayIndex: number, breakIndex: number, field: 'start' | 'end', value: string) => void;
   removeBreak: (dayIndex: number, breakIndex: number) => void;
   addBreak: (index: number) => void;
-  filterTimeOptions: (currentBreaks: Break[], workStart: string, workEnd: string, isStart: boolean) => string[];
+  filterTimeOptions: (currentBreaks: Break[], workStart: string, workEnd: string, isStart: boolean, excludeIndex: number) => string[];
   generateTimeOptions: () => string[];
 }
 
@@ -40,7 +39,7 @@ const DayCard: React.FC<DayCardProps> = ({
     >
       <div className='flex items-center justify-between'>
         <label className='font-semibold'>{day.day}</label>
-        <Switch  direction='rtl' checked={day.isActive} onCheckedChange={() => handleToggle(dayIndex)} />
+        <Switch direction='rtl' checked={day.isActive} onCheckedChange={() => handleToggle(dayIndex)} />
       </div>
       <AnimatePresence>
         {day.isActive && (
@@ -55,13 +54,13 @@ const DayCard: React.FC<DayCardProps> = ({
               <label className='mb-2 block font-medium'>Working hours</label>
               <div className='flex items-center space-x-2'>
                 <TimeSelect
-                  value={day.workStart}
+                  value={day.workStart || ''}
                   onChange={(value: string) => handleWorkTimeChange(dayIndex, 'workStart', value)}
                   options={generateTimeOptions()}
                 />
                 <span className='relative -left-1'>-</span>
                 <TimeSelect
-                  value={day.workEnd}
+                  value={day.workEnd || ''}
                   onChange={(value: string) => handleWorkTimeChange(dayIndex, 'workEnd', value)}
                   options={generateTimeOptions()}
                 />

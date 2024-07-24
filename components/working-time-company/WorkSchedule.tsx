@@ -1,157 +1,222 @@
-'use client'
-import React, { useState } from 'react';
-import DayCard from './DayCard';
-import { DaySchedule, Break } from './types';
-import { Card } from '../ui/card';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { Button } from "@/components/ui/button";
+import DayCard from "./DayCard";
+import { toast } from "@/components/ui/use-toast";
+import { DaySchedule, Break } from "./types";
 
-const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const FormSchema = z.object({
+  schedule: z.array(
+    z.object({
+      day: z.string(),
+      persianDay: z.string(),
+      isActive: z.boolean(),
+      workStart: z.string().optional(),
+      workEnd: z.string().optional(),
+      breaks: z.array(
+        z.object({
+          start: z.string().optional(),
+          end: z.string().optional(),
+        })
+      ).optional(),
+    })
+  ),
+});
 
-const initialSchedule: DaySchedule[] = daysOfWeek.map((day) => ({
-  day,
-  isActive: day === 'Mon' || day === 'Tue' || day === 'Thu', // Example active days
-  workStart: '09:00',
-  workEnd: '18:00',
-  breaks:
-    day === 'Mon'
-      ? [
-          { start: '13:00', end: '14:00' },
-          { start: '15:30', end: '16:00' },
-        ]
-      : [],
-}));
+const initialSchedule: DaySchedule[] = [
+  {
+    day: "Monday",
+    persianDay: "??????",
+    isActive: true,
+    workStart: "07:00",
+    workEnd: "14:00",
+    breaks: [],
+  },
+  {
+    day: "Tuesday",
+    persianDay: "???????",
+    isActive: true,
+    workStart: "07:00",
+    workEnd: "14:00",
+    breaks: [],
+  },
+  {
+    day: "Wednesday",
+    persianDay: "????????",
+    isActive: true,
+    workStart: "07:00",
+    workEnd: "14:00",
+    breaks: [],
+  },
+  {
+    day: "Thursday",
+    persianDay: "????????",
+    isActive: true,
+    workStart: "07:00",
+    workEnd: "14:00",
+    breaks: [],
+  },
+  {
+    day: "Saturday",
+    persianDay: "????",
+    isActive: true,
+    workStart: "07:00",
+    workEnd: "14:00",
+    breaks: [],
+  },
+  {
+    day: "Sunday",
+    persianDay: "???????",
+    isActive: true,
+    workStart: "07:00",
+    workEnd: "14:00",
+    breaks: [],
+  },
+  {
+    day: "Friday",
+    persianDay: "????",
+    isActive: false,
+    workStart: "",
+    workEnd: "",
+    breaks: [],
+  },
+];
 
-const generateTimeOptions = () => {
-  const times: string[] = [];
-  let currentTime = new Date('1970-01-01T00:00:00');
-  while (currentTime.getDate() === 1) {
-    times.push(currentTime.toTimeString().substring(0, 5));
-    currentTime.setMinutes(currentTime.getMinutes() + 5);
+const filterTimeOptions = (
+  currentBreaks: Break[],
+  workStart: string,
+  workEnd: string,
+  isStart: boolean,
+  excludeIndex: number
+): string[] => {
+  const allTimes = generateTimeOptions();
+  const workStartIndex = allTimes.indexOf(workStart);
+  const workEndIndex = allTimes.indexOf(workEnd);
+  let filteredTimes = allTimes.slice(workStartIndex, workEndIndex + 1);
+
+  currentBreaks.forEach((b, index) => {
+    if (index !== excludeIndex) {
+      const breakStartIndex = allTimes.indexOf(b.start);
+      const breakEndIndex = allTimes.indexOf(b.end);
+
+      if (isStart) {
+        // Remove times that are within the range of an existing break
+        filteredTimes = filteredTimes.filter(
+          time => allTimes.indexOf(time) < breakStartIndex || allTimes.indexOf(time) > breakEndIndex
+        );
+      } else {
+        // Remove times that are within the range of an existing break, plus the start time
+        filteredTimes = filteredTimes.filter(
+          time => allTimes.indexOf(time) <= breakStartIndex || allTimes.indexOf(time) > breakEndIndex
+        );
+        filteredTimes.shift()
+        filteredTimes.shift()
+
+      }
+    }
+  });
+
+  return filteredTimes;
+};
+
+const generateTimeOptions = (): string[] => {
+  const times = [];
+  for (let i = 0; i < 24; i++) {
+    for (let j = 0; j < 60; j += 5) { // Generates time options in 5-minute intervals
+      const hour = i.toString().padStart(2, '0');
+      const minute = j.toString().padStart(2, '0');
+      times.push(`${hour}:${minute}`);
+    }
   }
   return times;
 };
 
-const WorkSchedule: React.FC = () => {
+export function WorkSchedule() {
   const [schedule, setSchedule] = useState<DaySchedule[]>(initialSchedule);
 
-  const isValidTimeRange = (start: string, end: string) => {
-    return start < end;
-  };
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: { schedule },
+  });
 
-  const isValidBreak = (
-    breaks: Break[],
-    newBreak: Break,
-    workStart: string,
-    workEnd: string,
-  ) => {
-    return (
-      newBreak.start >= workStart &&
-      newBreak.end <= workEnd &&
-      breaks.every(
-        (b) =>
-          (newBreak.start >= b.end && newBreak.end >= b.end) ||
-          (newBreak.start <= b.start && newBreak.end <= b.start),
-      )
-    );
-  };
+  useMemo(() => {
+    form.reset({ schedule }); // Reset the form whenever the schedule state changes
+  }, [schedule, form]);
 
-  const filterTimeOptions = (
-    currentBreaks: Break[],
-    workStart: string,
-    workEnd: string,
-    isStart: boolean,
-  ) => {
-    return generateTimeOptions().filter((time) => {
-      if (time < workStart || time > workEnd) return false;
-      return currentBreaks.every((b) =>
-        isStart
-          ? time < b.start || time >= b.end
-          : time > b.start || time <= b.end,
-      );
-    });
-  };
-
-  const handleToggle = (index: number) => {
+  const handleToggle = useCallback((index: number) => {
     const newSchedule = [...schedule];
     newSchedule[index].isActive = !newSchedule[index].isActive;
     setSchedule(newSchedule);
-  };
+  },[schedule])
 
-  const handleWorkTimeChange = (
+  const handleWorkTimeChange = useCallback((
     index: number,
-    field: 'workStart' | 'workEnd',
-    value: string,
+    field: "workStart" | "workEnd",
+    value: string
   ) => {
     const newSchedule = [...schedule];
-    const updatedDaySchedule = { ...newSchedule[index], [field]: value };
+    newSchedule[index][field] = value;
+    setSchedule(newSchedule);
+  },[schedule])
 
-    if (
-      isValidTimeRange(updatedDaySchedule.workStart, updatedDaySchedule.workEnd)
-    ) {
-      newSchedule[index] = updatedDaySchedule;
-
-      // Ensure existing breaks are within the updated working hours
-      newSchedule[index].breaks = newSchedule[index].breaks.filter(
-        (b) =>
-          b.start >= updatedDaySchedule.workStart &&
-          b.end <= updatedDaySchedule.workEnd,
-      );
-
-      setSchedule(newSchedule);
-    } else {
-      alert('The start time must be earlier than the end time.');
-    }
-  };
-
-  const handleBreakChange = (
+  const handleBreakChange = useCallback((
     dayIndex: number,
     breakIndex: number,
-    field: 'start' | 'end',
-    value: string,
+    field: "start" | "end",
+    value: string
   ) => {
     const newSchedule = [...schedule];
-    const newBreak = {
-      ...newSchedule[dayIndex].breaks[breakIndex],
-      [field]: value,
-    };
-
-    if (
-      isValidTimeRange(newBreak.start, newBreak.end) &&
-      isValidBreak(
-        newSchedule[dayIndex].breaks.filter((_, i) => i !== breakIndex),
-        newBreak,
-        newSchedule[dayIndex].workStart,
-        newSchedule[dayIndex].workEnd,
-      )
-    ) {
-      newSchedule[dayIndex].breaks[breakIndex] = newBreak;
-      setSchedule(newSchedule);
-    } else {
-      alert(
-        'Invalid break time or overlapping with another break, or not within working hours.',
-      );
-    }
-  };
-
-  const addBreak = (index: number) => {
-    const newSchedule = [...schedule];
-    const newBreak = { start: '', end: '' };
-    newSchedule[index].breaks.push(newBreak);
+    newSchedule[dayIndex].breaks[breakIndex][field] = value;
     setSchedule(newSchedule);
-  };
+  },[schedule])
 
-  const removeBreak = (dayIndex: number, breakIndex: number) => {
+  const addBreak = useCallback((index: number) => {
+    const newSchedule = [...schedule];
+    newSchedule[index].breaks.push({ start: "", end: "" });
+    setSchedule(newSchedule);
+  },[schedule])
+
+  // const addBreak = useCallback((index: number) => {
+  //   setSchedule(prev => {
+  //     const newSchedule = [...prev];
+  //     const day = newSchedule[index];
+  //     const availableTimes = filterTimeOptions(day.breaks, day.workStart || "", day.workEnd || "", true, -1);
+  //     if (availableTimes.length > 1) {
+  //       day.breaks.push({ start: availableTimes[0], end: availableTimes[1] });
+  //     } else {
+  //       toast({ title: "No available time slots", description: "There are no available time slots to add a break." });
+  //     }
+  //     return newSchedule;
+  //   });
+  // },[])
+
+  const removeBreak = useCallback((dayIndex: number, breakIndex: number) => {
     const newSchedule = [...schedule];
     newSchedule[dayIndex].breaks.splice(breakIndex, 1);
     setSchedule(newSchedule);
+  },[schedule])
+
+  const onSubmit = (data: z.infer<typeof FormSchema>) => {
+    console.log("Form Data:", data);
+    toast({
+      title: "You submitted the following values:",
+      description: (
+        <pre className="mt-2  w-[340px] rounded-md bg-slate-950 p-4">
+          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+        </pre>
+      ),
+    });
   };
 
   return (
-    <div className='container mx-auto p-4'>
-      {schedule.map((day, dayIndex) => (
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 space-x-2">
+      {schedule.map((day, index) => (
         <DayCard
-          key={day.day}
+          key={index}
           day={day}
-          dayIndex={dayIndex}
+          dayIndex={index}
           handleToggle={handleToggle}
           handleWorkTimeChange={handleWorkTimeChange}
           handleBreakChange={handleBreakChange}
@@ -161,8 +226,9 @@ const WorkSchedule: React.FC = () => {
           generateTimeOptions={generateTimeOptions}
         />
       ))}
-    </div>
+      <div className="flex justify-end">
+        <Button type="submit">Submit</Button>
+      </div>
+    </form>
   );
-};
-
-export default WorkSchedule;
+}
